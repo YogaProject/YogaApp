@@ -211,9 +211,7 @@ header {
 .content p {
   word-wrap: break-word;
 }
-</style>
 
-<style>
 .cube-btn {
   height: 35px;
   width: 60px;
@@ -225,5 +223,9 @@ header {
   line-height: 35px;
   padding:0;
 }
+</style>
+
+<style>
+
 </style>
 

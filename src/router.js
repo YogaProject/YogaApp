@@ -57,6 +57,11 @@ export default new Router({
       component: () => import('./components/newsPage/NewsDetail.vue')
     },
     {
+      path: '/personalPage',
+      name: 'personalPage',
+      component: () => import('./components/common/PersonalPage.vue')
+    },
+    {
       path: '/comment',
       name: 'comment',
       component: () => import('./components/common/CommentPage.vue')

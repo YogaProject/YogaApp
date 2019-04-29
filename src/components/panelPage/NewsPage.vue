@@ -4,7 +4,7 @@
   <!--图文页面组件  -->
   <!-- 无限滚动 -->
   <div class="box" :style="{height:clientHeight-50+'px'}">
-    <cube-page type="recycle-list" title="动态" showBack="false">
+    <cube-page type="recycle-list" title="动态">
       <div slot="content">
         <div class="view-wrapper" >
           <!-- 筛选条件 -->
@@ -38,6 +38,7 @@
                     <!-- 用户名 -->
                     <span class="name">
                       {{data.username}}
+                      [{{data.role}}]
                       <!-- vip -->
                       <i class="cubeic-vip">{{data.userlevel}}</i>
                     </span>
@@ -76,6 +77,7 @@ export default {
   },
   data() {
     return {
+      
       clientHeight: "",
       selectedLabel: "all",
       initTime: new Date().getTime(),
@@ -116,6 +118,7 @@ export default {
         msg: msg,
         img: "",
         userlevel: "vip2",
+        role:'教练',
         location:"gotham",
         avatar: ".\newsPageTulips.jpg",
         time: new Date(

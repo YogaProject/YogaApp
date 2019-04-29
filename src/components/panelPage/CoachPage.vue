@@ -1,7 +1,7 @@
 <template>
   <div :style="{height:clientHeight-50+'px'}">
     <!-- cube-page  -->
-    <cube-page title="教练" showBack="false">
+    <cube-page title="教练" >
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">

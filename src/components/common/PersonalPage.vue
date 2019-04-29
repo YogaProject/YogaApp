@@ -1,8 +1,8 @@
 /* eslint-disable */
 <template>
-  <div :style="{height:clientHeight-50+'px'}">
+  <div :style="{height:clientHeight+'px'}">
     <!-- cube-page  -->
-    <cube-page title="个人主页">
+    <cube-page title="个人主页" showBack>
       <div slot="content">
         <div class="view-wrapper">
           <!-- 头像、昵称、vip -->
@@ -30,13 +30,15 @@
             </div>
           </div>
 
-            <div class='info'>
-
-                <p>手机号：</p>
-                <p>QQ：</p>
-                <P>微信：</P>
-            </div>
+          <div class="info" v-if="perm==='ok'">
+            <p class="title">联系方式</p>
+            <p>手机号：{{user.phone}}</p>
+            <p>QQ：{{user.qq}}</p>
+            <P>微信：{{user.wechat}}</P>
+          </div>
         </div>
+                  <cube-button @click="goSignCoach" class="btn">约私教</cube-button>
+
       </div>
     </cube-page>
   </div>
@@ -51,15 +53,24 @@ export default {
   },
   data() {
     return {
+      perm:'ok',
       clientHeight: "",
-      student: false
+      student: false,
+      user:{
+        id:'',
+        phone:'',
+        qq:'',
+        wechat:''
+      }
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
   },
   methods: {
+    goSignCoach(){
 
+    }
   }
 };
 </script>
@@ -130,42 +141,29 @@ export default {
 }
 
 /* 功能列表 */
-.list {
+.info {
   margin-top: 30px;
+  background-color: #fff;
+  min-height: 150px;
+  line-height: 50px;
+  text-align: left;
+  padding: 20px;
+  box-shadow: 0 0 10px #aaa;
+
   /* border:1px solid #aaa; */
 }
 
-.column {
-  /* border:1px solid red; */
-  height: 50px;
-  background-color: white;
-  margin-bottom: 10px;
-  box-shadow: 0 0 5px #aaa;
-  line-height: 50px;
-  text-align: left;
-  padding-left: 40px;
+.info p{
+  padding-left: 5px;
+
+}
+.title{
+  border-bottom: 1px solid #ccc;
 }
 
-.cubeic-arrow {
-  float: right;
-  margin-right: 30px;
-}
-
-.cubeic-setting {
+.btn{
   position: absolute;
-  top: 0;
+  bottom:0;
   left: 0;
-  padding: 5px 15px;
-  color: #fff;
-  font-size: 26px;
-}
-
-.cubeic-email {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 5px 15px;
-  color: #fff;
-  font-size: 26px;
 }
 </style>
