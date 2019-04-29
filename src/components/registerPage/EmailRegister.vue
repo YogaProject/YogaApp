@@ -7,7 +7,9 @@
                 <cube-form-item :field="fields[2]"></cube-form-item>
 
       </cube-form-group>
- 
+    <cube-form-group>
+        <span class="info">*教练必须使用手机注册</span>
+      </cube-form-group>
       <cube-form-group>
            <cube-button class="btn" @click="getCode">获取邮箱验证码</cube-button>
         <cube-button type="submit" :primary="true" class="btn">注册</cube-button>
@@ -111,7 +113,11 @@ export default {
   border: 1px solid #55efc4;
   border-radius: 16px;
 }
-
+.info {
+  float: left;
+  font-size: 12px;
+  margin-top: 10px;
+}
 .btn {
   margin-top: 30px;
   width: 300px;

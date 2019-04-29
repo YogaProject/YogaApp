@@ -11,7 +11,7 @@
         <cube-form-item :field="fields[0]" class="phone"></cube-form-item>
         <cube-form-item :field="fields[1]"></cube-form-item>
       </cube-form-group>
-   
+
       <cube-form-group>
         <cube-button class="btn" @click="getCode">获取验证码</cube-button>
         <cube-button type="submit" :primary="true" class="btn">登录</cube-button>
@@ -27,15 +27,18 @@ export default {
   data() {
     return {
       user: {
+        userRole: "",
         userPhone: "",
         code: ""
       },
       validity: {},
       valid: undefined,
       fields: [
+     
         {
           type: "input",
           modelKey: "userPhone",
+          label: "手机号",
           props: {
             placeholder: "手机号",
             clearable: {
@@ -49,7 +52,6 @@ export default {
             required: true,
             type: "number",
             pattern: /^(13|14|15|17|18|19)\d{9}$/
-            
           }
         },
         {
@@ -67,7 +69,7 @@ export default {
           },
           rules: {
             required: true,
-            type: "number",
+            type: "number"
           }
         }
       ]
@@ -125,6 +127,4 @@ export default {
   border-radius: 16px;
   border: 1px solid #55efc4;
 }
-
-
 </style>

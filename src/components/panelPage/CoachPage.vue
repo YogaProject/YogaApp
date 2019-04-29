@@ -31,8 +31,11 @@
                 class="window"
               >
                 <div class="left">
-                  <div class="avatar"></div>
-                  <p class="name">{{user.name}}<i class='cubeic-vip'>{{user.userLevel}}</i></p>
+                  <div class="avatar" @click="goDetail(user.id)"></div>
+                  <p class="name">
+                    {{user.name}}
+                    <i class="cubeic-vip">{{user.userLevel}}</i>
+                  </p>
                 </div>
                 <div class="right">
                   <cube-rate v-model="user.rate" :disabled="true" :max="5" :justify="false"></cube-rate>
@@ -69,20 +72,14 @@ export default {
       },
       show: false,
       locations: [{ lng: 116.404, lat: 39.915 }],
-      coaches: [
-        {
-          id: "1",
-          name: "梅溪湖",
-          avatar: "",
-          location: ""
-        }
-      ],
+
       user: {
+        id:'',
         name: "阿云嘎",
         avatar: "",
-        rate:4,
-        userLevel:'vip4',
-        type:'舒缓瑜伽'
+        rate: 4,
+        userLevel: "vip4",
+        type: "舒缓瑜伽"
       }
     };
   },
@@ -90,6 +87,9 @@ export default {
     this.clientHeight = `${document.documentElement.clientHeight}`;
   },
   methods: {
+    goDetail(id){
+      this.$router.push({path:'/personalPage'})
+    },
     handleClick(id) {},
     infoWindowClose() {
       this.show = false;
@@ -151,17 +151,28 @@ export default {
 
 .window {
   font-size: 18px;
-  display:flex;
+  display: flex;
   flex-direction: row;
+  width:200px;
 }
-.left{
-  border-right:1px solid #ccc;
+.left {
+  border-right: 1px solid #ccc;
+  width: 100px;
 }
-.cube-rate{
-  width:100px;
+.cube-rate {
+  width: 100%;
 }
-.right{
-padding:0 5px;
+.right {
+  width: 100px;
+  line-height: 30px;
+  margin:10px 10px;
+}
+.cubeic-vip {
+  font-size: 12px;
+  border-radius: 10px;
+  padding-left: 2px;
+  padding-right: 3px;
+  background-color: yellow;
 }
 .cubeic-search {
   padding-right: 15px;

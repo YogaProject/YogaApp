@@ -20,6 +20,7 @@
                   <i class="cubeic-location" @click="openMap">{{data.location}}</i>
                 </p>
                 <p class="content">{{data.content}}</p>
+                <cube-button @click="goSign" v-if="role==='coach'">签约场馆</cube-button>
               </div>
             </div>
           </cube-scroll>
@@ -38,6 +39,7 @@ export default {
   },
   data() {
     return {
+      role:'coach',
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
         pullUpLoad: this.pullUpLoadObj,
@@ -108,7 +110,8 @@ export default {
   width: 100%;
   background-color: #eee;
 }
-
+.cube-btn {
+}
 .content {
   background-color: #fff;
   min-height: 200px;

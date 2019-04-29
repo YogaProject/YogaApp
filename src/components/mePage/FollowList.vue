@@ -11,15 +11,19 @@
             @pulling-down="onPullingDown"
             @pulling-up="onPullingUp"
           >
+            <!-- 搜索框 -->
+            <cube-input v-model="search" :clearable="clearable" placeholder="搜索">
+              <i slot="append" class="cubeic-search"></i>
+            </cube-input>
             <ul v-for="item in list" :key="item.id">
-              <li class="column" >
+              <li class="column">
                 <div class="avatar" @click="goPage"></div>
                 <span>
                   {{item.name}}
                   <i class="cubeic-vip">{{item.userLevel}}</i>
                 </span>
-                <span class="is follow" v-if="!item.isfollow">互相关注</span>
-                <span class="not follow" v-if="item.isfollow">已关注</span>
+                <span class="is follow" v-if="!item.isfollow && role==='me'">互相关注</span>
+                <span class="not follow" v-if="item.isfollow && role==='me'">已关注</span>
               </li>
             </ul>
           </cube-scroll>
@@ -38,6 +42,7 @@ export default {
   },
   data() {
     return {
+      role:'',
       title: "我的关注",
       list: [
         {
@@ -155,9 +160,9 @@ export default {
     }
   },
   methods: {
-      goPage(){
-        //   跳转个人页面
-      },
+    goPage() {
+      //   跳转个人页面
+    },
     onPullingDown() {
       // 模拟更新数据
       setTimeout(() => {
@@ -206,7 +211,9 @@ export default {
   outline: none;
   display: inline-block;
 }
-
+.cubeic-search {
+  padding-right: 15px;
+}
 .column {
   height: 70px;
   border-bottom: 1px solid #aaa;
@@ -216,7 +223,7 @@ export default {
   flex-direction: row;
   justify-items: center;
   align-items: center;
-  margin:0 5px;
+  margin: 0 5px;
 }
 .cubeic-vip {
   font-size: 12px;

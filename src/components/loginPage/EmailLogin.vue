@@ -5,8 +5,8 @@
         <cube-form-item :field="fields[0]"></cube-form-item>
         <cube-form-item :field="fields[1]"></cube-form-item>
       </cube-form-group>
-      <cube-form-group class="forgetpwd">
-        <span @click="showPrompt">忘记密码？</span>
+      <cube-form-group>
+        <span class="forgetpwd" @click="showPrompt">忘记密码？</span>
       </cube-form-group>
       <cube-form-group>
         <cube-button type="submit" :primary="true" class="btn">登录</cube-button>
@@ -37,10 +37,10 @@ export default {
             autocomplete: false,
             maxlength: 30
           },
-           rules: {
+          rules: {
             required: true,
             notWhitespace: true,
-            pattern:/ /,
+            pattern: / /
           }
         },
         {
@@ -60,7 +60,7 @@ export default {
             autocomplete: false,
             maxlength: 100
           },
-           rules: {
+          rules: {
             required: true,
             notWhitespace: true
           }
@@ -71,26 +71,26 @@ export default {
 
   methods: {
     submitHandler(e) {},
-    goRegister(){
-      this.$emit('goRegister');
+    goRegister() {
+      this.$emit("goRegister");
     },
-    showPrompt(){
-       this.dialog = this.$createDialog({
-        type: 'prompt',
-        title: '找回密码',
+    showPrompt() {
+      this.dialog = this.$createDialog({
+        type: "prompt",
+        title: "找回密码",
         prompt: {
-          value: '',
-          placeholder: '请输入手机号或邮箱'
+          value: "",
+          placeholder: "请输入手机号或邮箱"
         },
         onConfirm: (e, promptValue) => {
           // value传回后台查找密码
           this.$createToast({
-            type: 'warn',
+            type: "warn",
             time: 1000,
-            txt: `密码已发送至： ${promptValue || ''}`
-          }).show()
+            txt: `密码已发送至： ${promptValue || ""}`
+          }).show();
         }
-      }).show()
+      }).show();
     }
   }
 };
@@ -117,13 +117,13 @@ export default {
   width: 300px;
   height: 40px;
   border-radius: 16px;
-  border:1px solid #55efc4;
+  border: 1px solid #55efc4;
 }
 
 .forgetpwd {
   font-size: 12px;
   color: #aaaaaa;
-  padding-left: 230px;
   margin-top: 10px;
+  float: right;
 }
 </style>

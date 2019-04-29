@@ -12,6 +12,9 @@
             @pulling-down="onPullingDown"
             @pulling-up="onPullingUp"
           >
+           <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
+            <cube-tab v-for="item in tabs" :label="item.label" :key="item.label">{{item.name}}</cube-tab>
+          </cube-tab-bar>
           <ul v-for="item in comments" :key="item.id">
             <li>
               <div class="info">
@@ -46,6 +49,25 @@ export default {
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
+      selectedLabel:'all',
+      tabs: [
+        {
+          label: 'all',
+          name: "全部"
+        },
+        {
+          label: 'good',
+          name: "好评"
+        },
+        {
+          label: 'middle',
+          name: "中评"
+        },
+        {
+          label: 'bad',
+          name: "差评"
+        }
+      ],
       comments: [
         {
           id: "1",
@@ -86,6 +108,7 @@ export default {
     };
   },
   methods: {
+    clickHandler(e){},
         onPullingDown() {
       // 模拟更新数据
       setTimeout(() => {
@@ -143,6 +166,11 @@ li{
     padding:10px 0 0 15px;
     line-height:20px;
 
+}
+#tab {
+  font-size: 14px;
+  height: 40px;
+  background-color:#fff;
 }
 .cubeic-vip {
   font-size: 12px;

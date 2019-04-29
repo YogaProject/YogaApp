@@ -2,8 +2,9 @@
   <div class="box" ref="box">
     <cube-form v-model="user" @submit="submitHandler" class="registerForm">
       <cube-form-group class="inputBox">
-        <cube-form-item :field="fields[0]" class="phone"></cube-form-item>
-        <cube-form-item :field="fields[1]"></cube-form-item>
+        <cube-form-item :field="fields[0]"></cube-form-item>
+        <cube-form-item :field="fields[1]" class="phone"></cube-form-item>
+        <cube-form-item :field="fields[2]"></cube-form-item>
       </cube-form-group>
       <cube-form-group>
         <cube-button class="btn" @click="getCode">获取验证码</cube-button>
@@ -23,8 +24,20 @@ export default {
       },
       fields: [
         {
+          type: "radio-group",
+          modelKey: "userRole",
+          label: "身份",
+          rules: {
+            required: true
+          },
+          props: {
+            options: ["教练", "学员"]
+          }
+        },
+        {
           type: "input",
           modelKey: "username",
+          label: "手机号",
           props: {
             placeholder: "手机号",
             clearable: {
@@ -38,7 +51,6 @@ export default {
             required: true,
             type: "number",
             pattern: /^(13|14|15|17|18|19)\d{9}$/
-            
           }
         },
         {
@@ -54,9 +66,9 @@ export default {
             autocomplete: false,
             maxlength: 6
           },
-           rules: {
+          rules: {
             required: true,
-            type: "number",
+            type: "number"
           }
         }
       ]
@@ -91,9 +103,6 @@ export default {
   width: 300px;
   height: 40px;
   border-radius: 16px;
-    border:1px solid #55efc4;
-
+  border: 1px solid #55efc4;
 }
-
-
 </style>

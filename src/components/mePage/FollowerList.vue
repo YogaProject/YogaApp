@@ -11,6 +11,10 @@
             @pulling-down="onPullingDown"
             @pulling-up="onPullingUp"
           >
+           <!-- 搜索框 -->
+            <cube-input v-model="search" :clearable="clearable" placeholder="搜索">
+              <i slot="append" class="cubeic-search"></i>
+            </cube-input>
             <ul v-for="item in list" :key="item.id">
               <li class="column">
                 <div class="avatar"></div>
@@ -18,8 +22,8 @@
                   {{item.name}}
                   <i class="cubeic-vip">{{item.userLevel}}</i>
                 </span>
-                <span class="is follow" v-if="!item.isfollow">互相关注</span>
-                <span class="not follow" v-if="item.isfollow" @click="follow"><i class="cubeic-add"></i>关注</span>
+                <span class="is follow" v-if="!item.isfollow && role==='me'">互相关注</span>
+                <span class="not follow" v-if="item.isfollow && role==='me'" @click="follow"><i class="cubeic-add"></i>关注</span>
               </li>
             </ul>
           </cube-scroll>
@@ -38,6 +42,7 @@ export default {
   },
   data() {
     return {
+      role:'',
       title: "我的粉丝",
       list: [
         {
@@ -224,6 +229,9 @@ export default {
   padding-left: 2px;
   padding-right: 3px;
   background-color: yellow;
+}
+.cubeic-search {
+  padding-right: 15px;
 }
 .follow {
   height: 30px;
