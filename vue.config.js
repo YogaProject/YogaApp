@@ -2,17 +2,17 @@
 // const resolve = dir => path.join(__dirname, dir)
 
 module.exports = {
-  runtimeCompiler: true,
-  // 配置路径别名
+  // runtimeCompiler: true,
+  publicPath: '/',
   devServer: {
     proxy: {
-      '/abc/': {
-        target: 'http://125.69.92.155:80',
+      '/api': {
+        target: 'http://192.168.5.226:80/',
         ws: true,
-        changeOrigin: true
-        // pathRewrite: {
-        //   '^/abc': '/'
-        // }
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
       }
     }
   },

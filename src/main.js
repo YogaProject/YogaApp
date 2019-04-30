@@ -4,9 +4,11 @@ import App from './App.vue'
 import Vuex from 'vuex'
 import store from './store'
 import router from './router'
+import axios from 'axios'
 import 'amfe-flexible'
 import BaiduMap from 'vue-baidu-map'
 
+Vue.use(axios)
 Vue.use(Vuex)
 Vue.use(Cube)
 Vue.use(BaiduMap, {
