@@ -24,7 +24,7 @@
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column">
+            <div class="column" v-if="role==='coach'">
               <router-link to="/withdraw">
                 提现
                 <i class="cubeic-arrow"/>
@@ -62,6 +62,7 @@ export default {
   data() {
     return {
       data: {
+        role:'',
         remain: "30"
       }
     };

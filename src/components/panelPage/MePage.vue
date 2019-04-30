@@ -104,7 +104,7 @@ export default {
       this.$router.push({ path: "/settings" });
     },
     goMessage() {
-      this.$router.push({ path: "/" });
+      this.$router.push({ path: "/notify" });
     }
   }
 };

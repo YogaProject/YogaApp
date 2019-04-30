@@ -1,7 +1,7 @@
 <template>
   <div :style="{height:clientHeight-50+'px'}">
     <!-- cube-page  -->
-    <cube-page title="所有场馆" >
+    <cube-page title="所有场馆">
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
@@ -15,20 +15,34 @@
             <cube-input v-model="search" :clearable="clearable" placeholder="搜索">
               <i slot="append" class="cubeic-search" @click="search(search)"></i>
             </cube-input>
-
-            <ul v-for="item in venues" :key="item.id">
-              <li @click="handleClick(item.id)">
-                <div class="bkimage" :style="{backgroundImage: 'url(' + (item.img || '') + ')'}">
-                  <div class="content">
-                    <span>{{ item.name }}</span>
-                    <span class="location">
-                      <i class="cubeic-location"/>
-                      {{item.location}}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            </ul>
+            <baidu-map
+              class="map"
+              :center="{lng: 116.404, lat: 39.915}"
+              :zoom="15"
+              :style="{height:clientHeight-100+'px'}"
+            >
+              <bm-marker
+                v-for="item in locations"
+                :key="item"
+                :position="item"
+                :dragging="true"
+                animation="BMAP_ANIMATION_BOUNCE"
+                @click="infoWindowOpen"
+              >
+                <!-- <bm-label content="教练A" :offset="{width: -35, height: 30}"/> -->
+                <bm-info-window
+                  :show="show"
+                  @close="infoWindowClose"
+                  @open="infoWindowOpen"
+                  class="window"
+                  @click="goDetail(venues[0].id)"
+                >
+                  <div class="avatar" ></div>
+                  <p class="name">{{venues[0].name}}</p>
+                  <p>{{venues[0].location}}</p>
+                </bm-info-window>
+              </bm-marker>
+            </baidu-map>
           </cube-scroll>
         </div>
       </div>
@@ -45,13 +59,15 @@ export default {
   },
   data() {
     return {
-      search:'',
+      show: false,
+      search: "",
       clientHeight: "",
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
+      locations: [{ lng: 116.404, lat: 39.915 }],
       venues: [
         {
           id: "1",
@@ -92,12 +108,17 @@ export default {
     this.clientHeight = `${document.documentElement.clientHeight}`;
   },
   methods: {
-    search(search){
-      
-    },
-    handleClick(id) {
+    goDetail(id) {
       this.$router.push({ path: "/venuedetail" });
     },
+    infoWindowClose() {
+      this.show = false;
+    },
+    infoWindowOpen() {
+      this.show = true;
+    },
+    search(search) {},
+    handleClick(id) {},
     onPullingDown() {
       // 模拟更新数据
       setTimeout(() => {
@@ -135,7 +156,16 @@ export default {
   width: 100%;
   background-color: #eee;
 }
-
+.avatar {
+  border-radius: 50%;
+  margin: 6px 20px 6px 6px;
+  min-width: 50px;
+  width: 50px;
+  height: 50px;
+  background-color: #aaa;
+  background-size: cover;
+  outline: none;
+}
 li {
   min-height: 150px;
   font-size: 16px;
@@ -164,9 +194,15 @@ li {
   word-wrap: break-word;
 }
 
-
-.cubeic-search{
+.cubeic-search {
   padding-right: 15px;
+}
+
+.window {
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
 }
 </style>
 

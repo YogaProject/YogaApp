@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-link to="/"></router-link>
+    <router-link to="/test">aaa</router-link>
     <!-- <router-link to="/about">About</router-link> -->
     <router-view @goRegister="goRegister" @goLogin="goLogin"/>
   </div>

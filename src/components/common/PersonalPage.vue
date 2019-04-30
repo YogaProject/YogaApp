@@ -37,8 +37,7 @@
             <P>微信：{{user.wechat}}</P>
           </div>
         </div>
-                  <cube-button @click="goSignCoach" class="btn">约私教</cube-button>
-
+        <cube-button @click="goSignCoach(user.id)" class="btn">约私教</cube-button>
       </div>
     </cube-page>
   </div>
@@ -53,14 +52,14 @@ export default {
   },
   data() {
     return {
-      perm:'ok',
+      perm: "ok",
       clientHeight: "",
       student: false,
-      user:{
-        id:'',
-        phone:'',
-        qq:'',
-        wechat:''
+      user: {
+        id: "",
+        phone: "",
+        qq: "",
+        wechat: ""
       }
     };
   },
@@ -68,8 +67,8 @@ export default {
     this.clientHeight = `${document.documentElement.clientHeight}`;
   },
   methods: {
-    goSignCoach(){
-
+    goSignCoach(id) {
+      this.$router.push({path:"/signcoach"})
     }
   }
 };
@@ -153,17 +152,16 @@ export default {
   /* border:1px solid #aaa; */
 }
 
-.info p{
+.info p {
   padding-left: 5px;
-
 }
-.title{
+.title {
   border-bottom: 1px solid #ccc;
 }
 
-.btn{
+.btn {
   position: absolute;
-  bottom:0;
+  bottom: 0;
   left: 0;
 }
 </style>

@@ -6,7 +6,11 @@
         <div class="view-wrapper">
           <div class="list">
             <div class="column info" >
-              <router-link to="/personal">
+               <router-link to="/userinfo" v-if="role==='user'"> 
+                个人信息
+                <i class="cubeic-arrow"/>
+              </router-link>
+              <router-link to="/coachinfo" v-if="role==='coach'">
                 个人信息
                 <i class="cubeic-arrow"/>
               </router-link>
@@ -47,7 +51,7 @@ export default {
   },
     data(){
       return{
-
+role:'coach'
       }
     }
 }

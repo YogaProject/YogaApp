@@ -8,6 +8,11 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: '/test',
+      name: 'test',
+      component: () => import('./views/Test.vue')
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login
@@ -102,9 +107,19 @@ export default new Router({
       component: () => import('./components/mePage/CoachOrder.vue')
     },
     {
+      path: '/userorder',
+      name: 'userorder',
+      component: () => import('./components/mePage/UserOrder.vue')
+    },
+    {
       path: '/comments',
       name: 'comments',
       component: () => import('./components/mePage/Comments.vue')
+    },
+    {
+      path: '/notify',
+      name: 'notify',
+      component: () => import('./components/mePage/notifyPage/NotifyPage.vue')
     },
     {
       path: '/myvenue',
@@ -122,9 +137,14 @@ export default new Router({
       component: () => import('./components/mePage/Settings.vue')
     },
     {
-      path: '/personal',
-      name: 'personal',
-      component: () => import('./components/mePage/settings/PersonalInfo.vue')
+      path: '/userinfo',
+      name: 'userinfo',
+      component: () => import('./components/mePage/settings/UserInfo.vue')
+    },
+    {
+      path: '/coachinfo',
+      name: 'coachinfo',
+      component: () => import('./components/mePage/settings/CoachInfo.vue')
     },
     {
       path: '/permissions',
@@ -154,6 +174,11 @@ export default new Router({
       path: '/depositLog',
       name: 'depositLog',
       component: () => import('./components/mePage/pursePage/DepositLog.vue')
+    },
+    {
+      path: '/signcoach',
+      name: 'signcoach',
+      component: () => import('./components/coachPage/SignCoach.vue')
     }
   ]
 })

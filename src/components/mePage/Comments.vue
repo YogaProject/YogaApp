@@ -5,6 +5,9 @@
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
+           <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
+            <cube-tab v-for="item in tabs" :label="item.label" :key="item.label">{{item.name}}</cube-tab>
+          </cube-tab-bar>
            <cube-scroll
             ref="scroll"
             :data="comments"
@@ -12,9 +15,7 @@
             @pulling-down="onPullingDown"
             @pulling-up="onPullingUp"
           >
-           <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
-            <cube-tab v-for="item in tabs" :label="item.label" :key="item.label">{{item.name}}</cube-tab>
-          </cube-tab-bar>
+          
           <ul v-for="item in comments" :key="item.id">
             <li>
               <div class="info">
