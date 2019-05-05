@@ -7,8 +7,7 @@
 
 <script>
 // @ is an alias to /src
-import * as homeApi from "@/api/home-api";
-import axios from 'axios'
+import axios from "axios";
 export default {
   name: "home",
   data() {
@@ -18,16 +17,9 @@ export default {
   },
   methods: {
     test() {
-    //   homeApi
-    //     .test(123)
-    //     .then(res => {
-    //       console.log(res);
-    //     })
-    //     .catch(() => {});
-
-    axios.get('/api/msg/1/2/detail').then(res => {
-  console.log(res)
-})
+      this.$fetch("/api/msg/1/2/detail").then(res => {
+        console.log(res);
+      });
     }
   }
 };

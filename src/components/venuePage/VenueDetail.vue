@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      role:'coach',
+      role: "coach",
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
         pullUpLoad: this.pullUpLoadObj,
@@ -70,6 +70,10 @@ export default {
         content: "梅溪湖36人男团由此出道"
       }
     };
+  },
+  mounted() {
+    let id = this.$route.params.id;
+
   },
   methods: {
     openMap(location) {},
@@ -110,8 +114,7 @@ export default {
   width: 100%;
   background-color: #eee;
 }
-.cube-btn {
-}
+
 .content {
   background-color: #fff;
   min-height: 200px;

@@ -1,17 +1,11 @@
 <template>
   <div>
     <!-- cube-page  -->
-    <cube-page title="我的订单" showBack="true">
+    <cube-page title="我的订单" showBack>
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
-          <cube-scroll
-            ref="scroll"
-            :data="orders"
-            :options="options"
-            @pulling-down="onPullingDown"
-            @pulling-up="onPullingUp"
-          >
+          <cube-scroll ref="scroll" :data="orders" :options="options" @pulling-down="onPullingDown">
             <ul v-for="item in orders" :key="item.orderId">
               <li>
                 <header>
@@ -19,14 +13,14 @@
                   <span class="status">{{item.orderStatus}}</span>
                 </header>
                 <div class="time">
-                  <p>创建：{{item.createtime}}</p>
-                  <p>上次更新：{{item.updatetime}}</p>
+                  <p>创建：{{item.createTime}}</p>
+                  <p>上次更新：{{item.updateTime}}</p>
                 </div>
                 <div class="info">
                   <div>
                     <div class="avatar"></div>
-                    {{item.accepter.accepterName}}
-                    <i class="cubeic-vip">{{item.accepter.userLevel}}</i>
+                    {{item.payer.nickname}}
+                    <i class="cubeic-vip">vip{{item.payer.level}}</i>
                   </div>
                   <div class="course">
                     <span>课程名称：{{item.course.courseName}}</span>
@@ -36,8 +30,13 @@
                   <p class="total">总计：￥{{item.orderMoney}}元</p>
                 </div>
                 <div class="opration">
-                  <cube-button v-if="item.orderStatus==='待付款'" @click="pay">付款</cube-button>
-                  <cube-button v-if="item.orderStatus==='已付款'" @click="goComment">评论</cube-button>
+                  <cube-button v-if="item.orderStatus==='待付款'" @click="pay(item.orderId)">付款</cube-button>
+                  <cube-button v-if="item.orderStatus==='待评价'" @click="goComment(item.orderId)">评论</cube-button>
+                  <cube-button v-if="item.orderStatus==='待评价'" @click="refund(item.orderId)">申请退款</cube-button>
+                  <cube-button
+                    v-if="item.orderStatus==='待确认'"
+                    @click="cancelOrder(item.orderId)"
+                  >取消订单</cube-button>
                 </div>
               </li>
             </ul>
@@ -62,6 +61,8 @@ export default {
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
+
+      orderId: "",
       orders: [
         {
           orderId: "1111111111111",
@@ -75,60 +76,114 @@ export default {
             coursePrice: "180.0"
           },
           orderMoney: "179.0",
-          orderStatus: "待付款"
+          orderStatus: "待评价"
         }
       ],
-      coupons:[],
+      coupons: [],
+      selectCoupon: ""
     };
   },
-
+  mounted() {
+    this.getData();
+  },
   methods: {
-    checkOrder() {},
-    pay() {
-        // 请求优惠券信息
-        // 弹出选择优惠券弹框
-         this.dialog = this.$createDialog({
-        type: "prompt",
-        title: "使用优惠券",
-        prompt: {
-          value: "",
-          placeholder: "请输入手机号或邮箱"
-        },
-        onConfirm: (e, promptValue) => {
-          // value传回后台查找密码
-          this.$createToast({
-            type: "warn",
-            time: 1000,
-            txt: `已使用优惠券`
-          }).show();
+    getData() {
+      // this.orders = this.$route.query.orderInfo;
+      this.$post("/api/user/listOrder").then(res => {
+        if (res.code === 1) {
+          this.orders = res.data;
         }
+      });
+      console.log("orders" + this.orders);
+    },
+    cancelOrder(orderId) {
+      this.$post("/api/student/updateOrderForCancel", orderId).then(res => {
+        console.log(res.message);
+        if (res.code === 1) {
+          this.getData();
+        }
+      });
+    },
+    refund(orderId){
+      // this.$post('/api/student/updateOrderForRefund')
+    },
+    pay(orderId) {
+      // 请求优惠券信息
+      this.orderId = orderId;
+      this.$fetch("/api/user/listCouponsByUserId").then(res => {
+        if (res.code === 1) {
+          this.coupons = [];
+          this.coupons.push({value:0,text:'无'})
+          for (let i = 0; i < res.data.length; i++) {
+            let item = {
+              value: res.data[i].couponId,
+              text: "代金券：" + res.data[i].faceValue
+            };
+            console.log("coupons" + item.value + item.text);
+            this.coupons.push(item);
+            console.log("coupons" + this.coupons[0].text);
+          }
+          if (!this.picker) {
+            this.picker = this.$createPicker({
+              title: "优惠券",
+              data: [this.coupons],
+              onSelect: this.selectHandle,
+              onCancel: this.cancelHandle
+            });
+          }
+          this.picker.show();
+        }
+      });
+      // 弹出选择优惠券弹框,选择优惠券会触发一个更新方法
+    },
+    selectHandle(selectedVal, selectedIndex, selectedText) {
+      this.$createDialog({
+        type: "warn",
+        content: `Selected Item: <br/> - value: ${selectedVal.join(
+          ", "
+        )} <br/> - index: ${selectedIndex.join(
+          ", "
+        )} <br/> - text: ${selectedText.join(" ")}`,
+        icon: "cubeic-alert"
+      }).show();
+      this.selectCoupon = selectedVal;
+      console.log(this.selectCoupon);
+      let coupon = {
+        couponId: selectedVal[0],
+        orderId: this.orderId
+      };
+      this.$post("/api/student/updateOrderWithCoupon", coupon).then(res => {
+        if (res.code === 1) {
+          const toast = this.$createToast({
+            txt: "Correct",
+            type: "correct"
+          });
+          toast.show();
+          this.$post("/api/student/updateOrderForPay", this.orderId).then(
+            res => {
+              if (res.code === 1) {
+                console.log(res.message);
+                this.getData();
+              }
+            }
+          );
+          // 付款
+        }
+      });
+    },
+    cancelHandle() {
+      this.$createToast({
+        type: "correct",
+        txt: "Picker canceled",
+        time: 1000
       }).show();
     },
-    goComment() {},
+    goComment(id) {
+      this.$router.push({path:"/addcoursecomments",query:{id}});
+    },
     onPullingDown() {
       // 模拟更新数据
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          // 如果有新数据
-          this.items.unshift(_foods[1]);
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate();
-        }
-      }, 1000);
-    },
-    onPullingUp() {
-      // 模拟更新数据
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          // 如果有新数据
-          let newPage = _foods.slice(0, 5);
-          this.items = this.items.concat(newPage);
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate();
-        }
-      }, 1000);
+      this.getData();
     }
   }
 };
@@ -187,12 +242,12 @@ header {
   text-align: left;
   padding: 10px 0 0 15px;
   line-height: 20px;
-  border: 1px solid red;
+  /* border: 1px solid #ccc; */
   margin: 10px;
 }
 
 .course {
-  border: 1px solid red;
+  /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
 }
@@ -242,6 +297,7 @@ header {
   border-radius: 8px;
   line-height: 35px;
   padding: 0;
+  margin-left: 10px;
 }
 </style>
 

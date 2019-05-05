@@ -11,36 +11,37 @@
           <!-- 头像、昵称、vip -->
           <div class="meBox">
             <div class="avatar"></div>
-            <span class="name">余笛</span>
-            <i class="cubeic-vip">vip2</i>
+            <span class="name">{{data.realName}}</span>
+            <i class="cubeic-vip">11</i>
+            <p>{{data.detail}}</p>
           </div>
           <!-- 关注、粉丝、动态、交易入口 -->
           <div class="entrance">
             <div class="block">
               <router-link to="/follow">
-                <p class="num">30</p>关注
+                <p class="num">{{follow}}</p>关注
               </router-link>
             </div>
             <div class="block">
               <router-link to="/follower">
-                <p class="num">30</p>粉丝
+                <p class="num">{{follower}}</p>粉丝
               </router-link>
             </div>
             <div class="block">
               <router-link to="/mynews">
-                <p class="num">30</p>动态
+                <p class="num">{{mynews}}</p>动态
               </router-link>
             </div>
             <div class="block">
               <router-link to="/comments">
-                <p class="num">30</p>评价
+                <p class="num">{{comments}}</p>评价
               </router-link>
             </div>
           </div>
-          <!-- 钱包等功能入口 -->
+          <!-- 钱包等功能入口 ,判断用户身份来展示入口-->
           <div class="list">
-            <div class="column">
-              <router-link to="/course">
+            <div class="column" v-if="!student">
+              <router-link to="/course" >
                 我的课程
                 <i class="cubeic-arrow"/>
               </router-link>
@@ -92,12 +93,20 @@ export default {
   },
   data() {
     return {
+      follow:0,
+      follower:0,
+      mynews:0,
+      comments:0,
       clientHeight: "",
-      student: false
+      student: false,
+      data:{
+        realName:'',
+      }
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
+    // this.$fetch('/api/')
   },
   methods: {
     goSetting() {

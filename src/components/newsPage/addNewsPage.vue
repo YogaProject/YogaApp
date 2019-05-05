@@ -5,7 +5,7 @@
         2. 照片
     -->
     <!-- cube-page  -->
-    <cube-page title="发动态" showBack="true">
+    <cube-page title="发动态" showBack>
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
@@ -33,16 +33,16 @@ export default {
       validity: {},
       valid: undefined,
       model: {
-        title:'',
+        title: "",
         content: "",
         uploadValue: []
       },
       schema: {
         fields: [
           {
-             type: "input",
+            type: "input",
             modelKey: "title",
-            placeholder:'请输入标题'
+            props: { placeholder: "请输入标题" }
           },
           {
             type: "textarea",
@@ -58,7 +58,7 @@ export default {
           {
             type: "upload",
             modelKey: "uploadValue",
-            
+
             // label: "Upload",
             events: {
               "file-removed": (...args) => {
@@ -66,7 +66,7 @@ export default {
               }
             },
             rules: {
-              required: true,
+              // required: true,
               uploaded: (val, config) => {
                 return Promise.all(
                   val.map((file, i) => {
@@ -103,7 +103,18 @@ export default {
     };
   },
   methods: {
-    submitHandler() {}
+    submitHandler(e, model) {
+      e.preventDefault();
+      this.$post("/api/homepage/pushHomepage", model).then(res => {
+        console.log(res);
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "correct"
+        });
+        toast.show();
+        this.$router.push('/main/newsPage')
+      });
+    }
   }
 };
 </script>

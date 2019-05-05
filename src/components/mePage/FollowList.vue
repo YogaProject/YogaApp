@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- cube-page  -->
-    <cube-page :title="title" showBack="true">
+    <cube-page :title="title" showBack>
       <div slot="content">
         <div class="view-wrapper">
           <cube-scroll
@@ -12,18 +12,18 @@
             @pulling-up="onPullingUp"
           >
             <!-- 搜索框 -->
-            <cube-input v-model="search" :clearable="clearable" placeholder="搜索">
-              <i slot="append" class="cubeic-search"></i>
+            <cube-input v-model="searchValue" :clearable="clearable" placeholder="搜索">
+              <i slot="append" class="cubeic-search" @click="search(searchValue)"></i>
             </cube-input>
-            <ul v-for="item in list" :key="item.id">
+            <ul v-for="item in list" :key="item.followId">
               <li class="column">
                 <div class="avatar" @click="goPage"></div>
                 <span>
-                  {{item.name}}
-                  <i class="cubeic-vip">{{item.userLevel}}</i>
+                  {{item.userNickName}}
+                  <i class="cubeic-vip">vip{{item.userLevel}}</i>
                 </span>
-                <span class="is follow" v-if="!item.isfollow && role==='me'">互相关注</span>
-                <span class="not follow" v-if="item.isfollow && role==='me'">已关注</span>
+                <span class="is follow" v-if="item.followStatus===1">互相关注</span>
+                <span class="not follow" v-if="item.followStatus===0">已关注</span>
               </li>
             </ul>
           </cube-scroll>
@@ -42,112 +42,11 @@ export default {
   },
   data() {
     return {
-      role:'',
+      searchValue:'',
+      clearable: {},
+      role: "",
       title: "我的关注",
-      list: [
-        {
-          id: 1,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 2,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 3,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 4,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: false
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        }
-      ]
+      list: []
     };
   },
   computed: {
@@ -159,7 +58,29 @@ export default {
       };
     }
   },
+  mounted() {
+    this.$post("/api/follow/showFollowList", 1).then(res => {
+      if (res.code === 1) {
+        this.list = res.data;
+      }
+    });
+  },
+
   methods: {
+    search(searchValue){
+      this.$post('api/follow/searchFollow',searchValue).then(res=>{
+         if (res.code === 1) {
+        this.list = res.data;
+      }
+      else{
+         const toast = this.$createToast({
+          txt: res.message,
+          type: "correct"
+        });
+        toast.show();
+      }
+      })
+    },
     goPage() {
       //   跳转个人页面
     },

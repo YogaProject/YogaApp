@@ -19,25 +19,29 @@
                   <span class="status">{{item.orderStatus}}</span>
                 </header>
                 <div class="time">
-                  <p>创建：{{item.createtime}}</p>
-                  <p>上次更新：{{item.updatetime}}</p>
+                  <p>创建：{{item.createTime}}</p>
+                  <p>上次更新：{{item.updateTime}}</p>
                 </div>
                 <div class="info">
                   <div>
-                    <div class='avatar'></div>
-                    {{item.payer.payerName}}
-                    <i class="cubeic-vip">{{item.payer.userLevel}}</i>
+                    <div class="avatar"></div>
+                    {{item.accepter.nickname}}
+                    <i class="cubeic-vip">vip{{item.accepter.level}}</i>
                   </div>
                   <div class="course">
                     <span>课程名称：{{item.course.courseName}}</span>
                     <span>课程描述：{{item.course.courseDetail}}</span>
                     <span>课程价格：￥{{item.course.coursePrice}}元</span>
                   </div>
-                  <p class='total'>总计：￥{{item.orderMoney}}元</p>
+                  <p class="total">总计：￥{{item.orderMoney}}元</p>
                 </div>
                 <div class="opration">
-                  <cube-button v-if="item.orderStatus==='待确认'" @click="checkOrder">确认</cube-button>
-                  <cube-button v-if="item.orderStatus==='已确认'" @click="completeOrder">完成</cube-button>
+                  <cube-button v-if="item.orderStatus==='待确认'" @click="checkOrder(item.orderId)">确认</cube-button>
+                  <cube-button v-if="item.orderStatus==='待确认'" @click="cancelOrder(item.orderId)">取消</cube-button>
+                  <cube-button
+                    v-if="item.orderStatus==='教练已确认'"
+                    @click="completeOrder(item.orderId)"
+                  >完成</cube-button>
                   <cube-button v-if="item.orderStatus==='已完成'" @click="goComment">查看评论</cube-button>
                 </div>
               </li>
@@ -63,6 +67,7 @@ export default {
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
+      orderId: "",
       orders: [
         {
           orderId: "1111111111111",
@@ -80,10 +85,52 @@ export default {
       ]
     };
   },
+  mounted() {
+    this.getData();
+  },
   methods: {
-    checkOrder() {},
-    completeOrder() {},
-    goComment() {},
+    getData() {
+      this.$post("/api/user/listOrder").then(res => {
+        if (res.code === 1) {
+          this.orders = res.data;
+        }
+      });
+    },
+    checkOrder(orderId) {
+      let order = {
+        orderId: orderId,
+        result: "accept"
+      };
+      this.$post("/api/coach/updateOrderForNewOrder", order).then(res => {
+        console.log(res.message);
+        if (res.code === 1) {
+          this.getData();
+        }
+      });
+    },
+    cancelOrder(orderId) {
+      let order = {
+        orderId: orderId,
+        result: "cancel"
+      };
+      this.$post("/api/coach/updateOrderForNewOrder", order).then(res => {
+        console.log(res.message);
+        if (res.code === 1) {
+          this.getData();
+        }
+      });
+    },
+    completeOrder(orderId) {
+      this.$post("/api/coach/updateOrderForWaitToPay", orderId).then(res => {
+        console.log(res.message);
+        if (res.code === 1) {
+          this.getData();
+        }
+      });
+    },
+    goComment() {
+      this.$router.push("/comments");
+    },
     onPullingDown() {
       // 模拟更新数据
       setTimeout(() => {
@@ -127,7 +174,7 @@ li {
   font-size: 16px;
   display: flex;
   flex-direction: column;
-  margin: 10px 0 ;
+  margin: 10px 0;
   background-color: #fff;
   box-shadow: 0 0 5px #aaa;
 }
@@ -138,12 +185,12 @@ header {
   line-height: 30px;
   /* background-color: rgba(85, 239, 196, 0.4); */
 }
-.id{
+.id {
   float: left;
   padding-left: 5px;
 }
 
-.status{
+.status {
   float: right;
   padding-right: 5px;
 }
@@ -166,15 +213,14 @@ header {
   text-align: left;
   padding: 10px 0 0 15px;
   line-height: 20px;
-  border: 1px solid red;
-  margin:10px;
+  /* border: 1px solid red; */
+  margin: 10px;
 }
 
 .course {
-  border: 1px solid red;
-  display:flex;
+  /* border: 1px solid red; */
+  display: flex;
   flex-direction: column;
-  
 }
 .cubeic-vip {
   font-size: 12px;
@@ -187,13 +233,13 @@ header {
   font-size: 10px;
   color: #aaa;
   text-align: left;
-  line-height:20px;
-  padding-left:10px;
+  line-height: 20px;
+  padding-left: 10px;
 }
 
-.total{
-  padding:5px 10px 5px 0;
-  text-align:right;
+.total {
+  padding: 5px 10px 5px 0;
+  text-align: right;
 }
 .opration {
   /* border: 1px solid #000; */
@@ -221,11 +267,10 @@ header {
   color: #aaa;
   border-radius: 8px;
   line-height: 35px;
-  padding:0;
+  padding: 0;
 }
 </style>
 
 <style>
-
 </style>
 

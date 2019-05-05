@@ -18,12 +18,12 @@
             <ul v-for="item in courses" :key="item.id">
               <li>
                 <div class="info">
-                  <span class="name">{{item.name}}</span>
-                  <span class="coursetime">每课时{{item.time}}</span>
+                  <span class="name">{{item.courseName}}</span>
+                  <!-- <span class="coursetime">每课时{{item.time}}</span> -->
                   <span class="price">价格：{{item.price}}/每课时</span>
                 </div>
                 <div class="content">
-                  <p>{{item.content}}</p>
+                  <p>{{item.detail}}</p>
                 </div>
               </li>
             </ul>
@@ -59,6 +59,13 @@ export default {
         }
       ]
     };
+  },
+  mounted(){
+     this.$post('api/course/listCourseByCoachId',4).then(res=>{
+          if(res.code===1){
+            this.courses = res.data;
+          }
+        })
   },
   methods: {
     goAdd(){

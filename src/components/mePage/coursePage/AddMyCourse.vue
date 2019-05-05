@@ -105,9 +105,19 @@ export default {
     };
   },
   methods: {
-    submitHandler(e) {
+    submitHandler(e, model) {
       e.preventDefault();
       console.log("submit", e);
+      this.$post("/api/coach/insertCourse",model).then(res => {
+        if (res.code === 1) {
+          const toast = this.$createToast({
+            txt: res.message,
+            type: "correct"
+          });
+          toast.show();
+          this.$router.push('/course')
+        }
+      });
     },
     validateHandler(result) {
       this.validity = result.validity;

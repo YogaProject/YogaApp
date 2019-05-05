@@ -1,17 +1,21 @@
 <template>
   <div class="box" ref="box">
-    <cube-form v-model="user" @submit="submitHandler" class="registerForm">
+    <cube-form
+      v-model="model"
+      @submit="submitHandler"
+      @validate="validateHandler"
+      class="registerForm"
+    >
       <cube-form-group class="inputBox">
         <cube-form-item :field="fields[0]"></cube-form-item>
         <cube-form-item :field="fields[1]"></cube-form-item>
-                <cube-form-item :field="fields[2]"></cube-form-item>
-
+        <cube-form-item :field="fields[2]"></cube-form-item>
       </cube-form-group>
-    <cube-form-group>
+      <cube-form-group>
         <span class="info">*教练必须使用手机注册</span>
       </cube-form-group>
       <cube-form-group>
-           <cube-button class="btn" @click="getCode">获取邮箱验证码</cube-button>
+        <cube-button type="submit" class="btn">获取邮箱验证码</cube-button>
         <cube-button type="submit" :primary="true" class="btn">注册</cube-button>
       </cube-form-group>
     </cube-form>
@@ -22,14 +26,18 @@ export default {
   name: "EmailBox",
   data() {
     return {
-      user: {
-        username: "",
-        password: ""
+      validity: {},
+      valid: undefined,
+      model: {
+        userEmail: "",
+        userVerifyCode: "",
+        userPwd: "",
+        roleName: "学员"
       },
       fields: [
         {
           type: "input",
-          modelKey: "username",
+          modelKey: "userEmail",
           props: {
             placeholder: "邮箱",
             clearable: {
@@ -39,14 +47,15 @@ export default {
             autocomplete: false,
             maxlength: 30
           },
-            rules: {
+          rules: {
             required: true,
-            type: 'email',
+            type: "email",
+            pattern: / /
           }
         },
         {
           type: "input",
-          modelKey: "password",
+          modelKey: "userPwd",
           props: {
             type: "password",
             placeholder: "请输入密码",
@@ -61,15 +70,15 @@ export default {
             autocomplete: false,
             maxlength: 18
           },
-           rules: {
+          rules: {
             required: true,
             notWhitespace: true,
-            pattern:/^[a-zA-Z]\\w{5,17}$/
+            type: "email"
           }
         },
         {
           type: "input",
-          modelKey: "code",
+          modelKey: "userVerifyCode",
           label: "验证码",
           props: {
             placeholder: "请输入验证码",
@@ -80,9 +89,9 @@ export default {
             autocomplete: false,
             maxlength: 6
           },
-           rules: {
-            required: true,
-            type: "number",
+          rules: {
+            // required: true,
+            type: "number"
           }
         }
       ]
@@ -90,11 +99,51 @@ export default {
   },
 
   methods: {
-    submitHandler(e) {},
-    getCode(){
-
+    validateHandler(result) {
+      this.validity = result.validity;
+      this.valid = result.valid;
+      console.log(
+        "validity",
+        result.validity,
+        result.valid,
+        result.dirty,
+        result.firstInvalidFieldIndex
+      );
+    },
+    submitHandler(e, model) {
+      e.preventDefault();
+      console.log(model);
+      if (model.userVerifyCode === undefined) {
+        // 获取验证码
+        this.$post("/api/userApp/sendRegEmailCode", {
+          user: model
+        }).then(res => {
+          console.log(res);
+        });
+      } else {
+        // 通过邮箱注册
+        this.$post("/api/userApp/regByEmail", {
+          user: model
+        }).then(res => {
+          console.log(res);
+          if (res.code === 1) {
+            // 注册成功，获取身份信息，将身份信息存到store里,封装？
+            sessionStorage.setItem("userName", res.data.email);
+            // 将用户名和token放入vuex
+            this.$store.dispatch("setUser", res.data);
+            const toast = this.$createToast({
+              txt: "Correct",
+              type: "correct"
+            });
+            toast.show();
+            this.$router.push({ path: "/main/newspage" });
+          }
+        });
+      }
     }
-  }
+  },
+
+  watch: {}
 };
 </script>
 <style scoped>
@@ -124,6 +173,4 @@ export default {
   height: 40px;
   border-radius: 16px;
 }
-
-
 </style>

@@ -6,7 +6,7 @@
   <div class="box" :style="{height:clientHeight-50+'px'}">
     <cube-page type="recycle-list" title="动态">
       <div slot="content">
-        <div class="view-wrapper" >
+        <div class="view-wrapper">
           <!-- 筛选条件 -->
           <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
             <cube-tab v-for="item in tabs" :label="item.label" :key="item.label">{{item.name}}</cube-tab>
@@ -27,30 +27,30 @@
             </template>
             <!-- 实际内容展示 -->
             <template slot="item" slot-scope="{ data }">
-              <div :id="data.id" class="item" @click="handleClick(data)">
+              <div :id="data.userId" class="item" @click="handleClick(data.mid)">
                 <div class="bubble">
                   <div class="info">
                     <!-- 头像 -->
-                    <div
-                      class="avatar"
-                      :style="{backgroundImage: 'url(' + (data.avatar || '') + ')'}"
-                    ></div>
+                    <div class="avatar" :style="{backgroundImage: 'url(' + (data.img || '') + ')'}"></div>
                     <!-- 用户名 -->
                     <span class="name">
-                      {{data.username}}
-                      [{{data.role}}]
+                      {{data.userNickName}}
+                      [{{data.roleName}}]
                       <!-- vip -->
-                      <i class="cubeic-vip">{{data.userlevel}}</i>
+                      <i class="cubeic-vip">vip{{data.userLevel}}</i>
                     </span>
 
                     <!-- 发布时间 -->
-                    <span class="time">{{data.time}}</span>
+                    <span class="time">{{data.publishTime}}</span>
                   </div>
                   <!-- 背景图片 -->
                   <div class="bkimage" :style="{backgroundImage: 'url(' + (data.img || '') + ')'}"></div>
                   <div class="content">
-                  <span >{{ data.msg }}</span>
-                  <span class="location"><i class="cubeic-location"/>{{data.location}}</span>
+                    <span>{{ data.title }}</span>
+                    <span class="location">
+                      <i class="cubeic-location"/>
+                      {{data.distance}}km
+                    </span>
                   </div>
                 </div>
               </div>
@@ -68,6 +68,7 @@
 import Mock from "@/components/newsPage/message.js";
 import CubePage from "@/components/common/cube-page.vue";
 import AddBtn from "@/components/newsPage/addNewsBtn.vue";
+
 export default {
   name: "newsPage",
   components: {
@@ -77,29 +78,30 @@ export default {
   },
   data() {
     return {
-      
+      items:[],
+      msg: [],
       clientHeight: "",
       selectedLabel: "all",
       initTime: new Date().getTime(),
       id: 0,
       size: 50,
       infinite: true,
-
+      address: { longitude: 104.0, latitude: 30.582, roleId: 0 },
       tabs: [
         {
-          label: 'all',
+          label: "all",
           name: "全部"
         },
         {
-          label: 'coach',
+          label: "coach",
           name: "教练"
         },
         {
-          label: 'venue',
+          label: "venue",
           name: "场馆"
         },
         {
-          label: 'follow',
+          label: "follow",
           name: "关注"
         }
       ]
@@ -107,47 +109,88 @@ export default {
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
+    var _this = this;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        // locationSuccess 获取成功的话
+        function(position) {
+          // _this.address.getLongitude = position.coords.longitude; // position就是我们通过api获取的信息，而我们想获取的经纬度就在coords下，随后将经纬度分别赋值给外部data设定好的变量
+          // _this.address.getLatitude = position.coords.latitude; // 记住如果这里直接写this可能会导致找不到外部的变量而报错，所以提前设置一下this的指向
+          console.log(_this.getLatitude); // 弹出经度测试
+        },
+        // locationError  获取失败的话
+        function(error) {
+          var errorType = [
+            "您拒绝共享位置信息",
+            "获取不到位置信息",
+            "获取位置信息超时"
+          ];
+          alert(errorType[error.code - 1]);
+        }
+      );
+    }
+    this.$post("/api/homepage/showHomepage", this.address).then(res => {
+      console.log(res.data);
+
+      _this.msg = res.data;
+    });
   },
   methods: {
     getItem(id) {
-      const msg =
-        Mock.messages[Math.floor(Math.random() * Mock.messages.length)];
-      return {
-        id,
-        username: "mr.lee",
-        msg: msg,
-        img: "",
-        userlevel: "vip2",
-        role:'教练',
-        location:"gotham",
-        avatar: ".\newsPageTulips.jpg",
-        time: new Date(
-          Math.floor(
-            this.initTime +
-              id * this.size * 1000 +
-              Math.random() * this.size * 1000
-          )
-        ).toLocaleTimeString()
-      };
+      if (id > 49) {
+        this.id = 0;
+      }
+      const data = this.msg[id];
+      // console.log(id + "." + data);
+      return data;
     },
     onFetch() {
-      let items = [];
       return new Promise(resolve => {
         setTimeout(() => {
           for (let i = 0; i < this.size; i++) {
-            items.push(this.getItem(this.id++));
+            this.items.push(this.getItem(this.id++));
           }
-          resolve(items);
+          resolve(this.items);
         }, 1000);
       });
     },
-    handleClick(data) {
+    handleClick(id) {
       // 传入id  并根据router跳转
-      this.$router.push("/newsDetail")
-      console.log(data);
+      this.$router.push({path:`/newsDetail/${id}`});
     },
-    clickHandler() {
+    clickHandler(label) {
       // 点击tab，改变数据
+      var _this = this;
+      switch (label) {
+        case "coach":
+          this.address.roleId = 2;
+          this.$post("/api/homepage/showOtherHomepage", this.address).then(
+            res => {
+              this.items=[];
+              // console.log('items'+this.items);
+              this.msg = res.data;
+              this.onFetch();
+            }
+          );
+          break;
+        case "venue":
+          this.address.roleId = 3;
+          this.$post("/api/homepage/showOtherHomepage", this.address).then(
+            res => {
+              // console.log(res.data);
+              _this.msg = res.data;
+            }
+          );
+          break;
+        case "follow":
+          this.$post("/api/follow/showFollowHomepage").then(res => {
+            console.log(res.data);
+            _this.msg = res.data;
+          });
+          break;
+        default:
+          break;
+      }
     }
   }
 };
@@ -164,7 +207,7 @@ export default {
 #tab {
   font-size: 14px;
   height: 40px;
-  background-color:#fff;
+  background-color: #fff;
 }
 
 .list {
@@ -185,29 +228,32 @@ export default {
 
     .info {
       height: 50px;
-      display:flex;
-      flex-direction row
-      align-items center
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
       // background-color #eeeeee
       .name {
-        font-size:16px;
-        font-weight:500;
+        font-size: 16px;
+        font-weight: 500;
       }
-      .cubeic-vip{
-        font-size:12px;
-        border:1px solid purple
-        border-radius:10px;
-        padding-left:2px;
-        padding-right:3px;
-        background-color yellow
+
+      .cubeic-vip {
+        font-size: 12px;
+        border: 1px solid purple;
+        border-radius: 10px;
+        padding-left: 2px;
+        padding-right: 3px;
+        background-color: yellow;
       }
-      .time{
-        margin-left:100px;
+
+      .time {
+        margin-left: 80px;
       }
+
       .avatar {
         border-radius: 50%;
-        margin:6px 6px 6px 6px;
-        
+        margin: 6px 6px 6px 6px;
         min-width: 40px;
         width: 40px;
         height: 40px;
@@ -260,13 +306,13 @@ export default {
         left: -10px;
       }
 
-      .content{
-        position:absolute;
-        bottom:30px;
-        display:flex;
-        flex-direction:row;
-        justify-content:space-between;
-          flex-wrap: nowrap;
+      .content {
+        position: absolute;
+        bottom: 30px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: nowrap;
       }
     }
 

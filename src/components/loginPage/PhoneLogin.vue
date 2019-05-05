@@ -1,7 +1,7 @@
 <template>
   <div class="box" ref="box">
     <cube-form
-      v-model="user"
+      v-model="model"
       :immediate-validate="false"
       @submit="submitHandler"
       @validate="validateHandler"
@@ -13,7 +13,7 @@
       </cube-form-group>
 
       <cube-form-group>
-        <cube-button class="btn" @click="getCode">获取验证码</cube-button>
+        <cube-button class="btn" type="submit">获取验证码</cube-button>
         <cube-button type="submit" :primary="true" class="btn">登录</cube-button>
         <cube-button :light="true" class="btn" @click="goRegist">没有账号？去注册</cube-button>
       </cube-form-group>
@@ -26,15 +26,13 @@ export default {
   props: ["width"],
   data() {
     return {
-      user: {
-        userRole: "",
+      model: {
         userPhone: "",
-        code: ""
+        userVerifyCode: ""
       },
       validity: {},
       valid: undefined,
       fields: [
-     
         {
           type: "input",
           modelKey: "userPhone",
@@ -56,7 +54,7 @@ export default {
         },
         {
           type: "input",
-          modelKey: "code",
+          modelKey: "userVerifyCode",
           label: "验证码",
           props: {
             placeholder: "请输入验证码",
@@ -94,8 +92,37 @@ export default {
         result.firstInvalidFieldIndex
       );
     },
-    submitHandler(e) {},
-    getCode(user) {},
+    submitHandler(e, model) {
+      e.preventDefault();
+      console.log(model);
+      if (model.userVerifyCode === undefined) {
+        // 获取手机登陆验证码
+        this.$post("/api/userApp/sendLoginPhonePwd", {
+          user: model
+        }).then(res => {
+          console.log(res);
+        });
+      } else {
+        // 通过手机登陆
+        this.$post("/api/userApp/loginByPhoneAndCode", {
+          user: model
+        }).then(res => {
+          console.log(res);
+          if (res.code === 1) {
+            // 注册成功，获取身份信息，将身份信息存到store里,封装？
+            sessionStorage.setItem("userName", res.data.userPhone);
+            // 将用户名和token放入vuex
+            this.$store.dispatch("setUser", res.data);
+            const toast = this.$createToast({
+              txt: "Correct",
+              type: "correct"
+            });
+            toast.show();
+            this.$router.push({ path: "/main/newspage" });
+          }
+        });
+      }
+    },
     goRegist() {
       // 控制app的router跳转register组件
       this.$emit("goRegister");

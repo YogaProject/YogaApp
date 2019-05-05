@@ -1,45 +1,52 @@
 <template>
   <div :style="{height:clientHeight-50+'px'}">
     <!-- cube-page  -->
-    <cube-page title="教练" >
+    <cube-page title="教练">
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
           <!-- 搜索框 -->
-          <cube-input v-model="search" :clearable="clearable" placeholder="搜索">
-            <i slot="append" class="cubeic-search"></i>
+          <cube-input
+            v-model="searchValue"
+            :clearable="clearable"
+            placeholder="搜索"
+            
+          >
+            <i slot="append" class="cubeic-search" @click="search(searchValue)"></i>
           </cube-input>
           <baidu-map
             class="map"
-            :center="{lng: 116.404, lat: 39.915}"
-            :zoom="15"
+            :center="mylocation"
+            :zoom="10"
             :style="{height:clientHeight-100+'px'}"
           >
+            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+
+            <!-- <bm-marker :position="mylocation" :dragging="false" animation="BMAP_ANIMATION_BOUNCE">
+            </bm-marker>-->
             <bm-marker
-              v-for="item in locations"
-              :key="item"
-              :position="item"
-              :dragging="true"
+              v-for="item in list"
+              :key="item.userId"
+              :position="{lng:item.longitude,lat:item.latitude}"
+              :dragging="false"
               animation="BMAP_ANIMATION_BOUNCE"
               @click="infoWindowOpen"
             >
               <!-- <bm-label content="教练A" :offset="{width: -35, height: 30}"/> -->
               <bm-info-window
                 :show="show"
+                :key="item.userId"
+                :positon="{lng:item.longitude,lat:item.latitude}"
                 @close="infoWindowClose"
                 @open="infoWindowOpen"
                 class="window"
               >
                 <div class="left">
-                  <div class="avatar" @click="goDetail(user.id)"></div>
-                  <p class="name">
-                    {{user.name}}
-                    <i class="cubeic-vip">{{user.userLevel}}</i>
-                  </p>
+                  <div class="avatar" @click="goDetail(item.userId)"></div>
+                  <p class="name">{{item.realName}}</p>
                 </div>
                 <div class="right">
-                  <cube-rate v-model="user.rate" :disabled="true" :max="5" :justify="false"></cube-rate>
-                  <p>{{user.type}}</p>
+                  <p>{{item.coachStyle}}</p>
                 </div>
               </bm-info-window>
             </bm-marker>
@@ -59,11 +66,12 @@ export default {
   },
   data() {
     return {
+      mylocation: { lng: 104.0, lat: 30.582 },
       clearable: {
         visible: true,
         blurHidden: false
       },
-      search: "",
+      searchValue: "",
       clientHeight: "",
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
@@ -71,24 +79,40 @@ export default {
         scrollbar: true
       },
       show: false,
-      locations: [{ lng: 116.404, lat: 39.915 }],
-
-      user: {
-        id:'',
-        name: "阿云嘎",
-        avatar: "",
-        rate: 4,
-        userLevel: "vip4",
-        type: "舒缓瑜伽"
-      }
+      list: []
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
+    let location = {
+      latitude: this.mylocation.lat,
+      longitude: this.mylocation.lng
+    };
+    this.$post("/api/user/listAroundCoachByAddress", location).then(res => {
+      console.log("data:" + res.data);
+
+      if (res.code === 1) {
+        this.list = res.data;
+        console.log(this.list);
+      }
+    });
   },
   methods: {
-    goDetail(id){
-      this.$router.push({path:'/personalPage'})
+    search(searchValue) {
+      let search = {
+        realName: searchValue,
+        latitude: this.mylocation.lat,
+        longitude: this.mylocation.lng
+      };
+
+      this.$post("/api/user/listAroundCoachByAddress", search).then(res => {
+        if (res.code === 1) {
+          this.list = res.data;
+        }
+      });
+    },
+    goDetail(id) {
+      this.$router.push({ path: `/personalPage/${id}` });
     },
     handleClick(id) {},
     infoWindowClose() {
@@ -153,7 +177,7 @@ export default {
   font-size: 18px;
   display: flex;
   flex-direction: row;
-  width:200px;
+  width: 200px;
 }
 .left {
   border-right: 1px solid #ccc;
@@ -165,7 +189,7 @@ export default {
 .right {
   width: 100px;
   line-height: 30px;
-  margin:10px 10px;
+  margin: 10px 10px;
 }
 .cubeic-vip {
   font-size: 12px;
@@ -178,7 +202,7 @@ export default {
   padding-right: 15px;
 }
 .cube-input {
-  width: 90%;
+  /* width: 90%; */
 }
 </style>
 <style>

@@ -17,15 +17,15 @@
             </cube-input>
             <baidu-map
               class="map"
-              :center="{lng: 116.404, lat: 39.915}"
-              :zoom="15"
+              :center="mylocation"
+              :zoom="10"
               :style="{height:clientHeight-100+'px'}"
             >
               <bm-marker
-                v-for="item in locations"
+                v-for="item in venues"
                 :key="item"
-                :position="item"
-                :dragging="true"
+                :position="{lng:item.longitude,lat:item.latitude}"
+                :dragging="false"
                 animation="BMAP_ANIMATION_BOUNCE"
                 @click="infoWindowOpen"
               >
@@ -37,9 +37,9 @@
                   class="window"
                   @click="goDetail(venues[0].id)"
                 >
-                  <div class="avatar" ></div>
-                  <p class="name">{{venues[0].name}}</p>
-                  <p>{{venues[0].location}}</p>
+                  <div class="avatar" @click="goDetail(item.userId)"></div>
+                  <p class="name">{{item.realName}}</p>
+                  <p>{{item.clicks}}</p>
                 </bm-info-window>
               </bm-marker>
             </baidu-map>
@@ -67,45 +67,29 @@ export default {
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
-      locations: [{ lng: 116.404, lat: 39.915 }],
+      mylocation: { lng: 104.0, lat: 30.582 },
       venues: [
-        {
-          id: "1",
-          name: "梅溪湖",
-          content:
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          location: "湖南长沙",
-          img: ""
-        },
-        {
-          id: "2",
-          name: "梅溪湖",
-          content:
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          location: "湖南长沙",
-          img: ""
-        },
-        {
-          id: "3",
-          name: "梅溪湖",
-          content:
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          location: "湖南长沙",
-          img: ""
-        },
-        {
-          id: "4",
-          name: "梅溪湖",
-          content:
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          location: "湖南长沙",
-          img: ""
-        }
+    
       ]
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
+     let location = {
+      latitude: this.mylocation.lat,
+      longitude: this.mylocation.lng
+    };
+    this.$post("/api/user/listAroundVenueByAddress", location).then(res => {
+      console.log("data:" + res.data);
+
+      if (res.code === 1) {
+        this.venues = res.data;
+        console.log(this.venues);
+        
+      }else{
+        // 查询不到添加提示
+      }
+    });
   },
   methods: {
     goDetail(id) {
@@ -121,15 +105,7 @@ export default {
     handleClick(id) {},
     onPullingDown() {
       // 模拟更新数据
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          // 如果有新数据
-          this.items.unshift(_foods[1]);
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate();
-        }
-      }, 1000);
+   this.$fetch('/api/')
     },
     onPullingUp() {
       // 模拟更新数据

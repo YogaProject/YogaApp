@@ -57,12 +57,12 @@ export default new Router({
       component: () => import('./components/newsPage/addNewsPage.vue')
     },
     {
-      path: '/newsDetail',
+      path: '/newsDetail/:id',
       name: 'newsDetail',
       component: () => import('./components/newsPage/NewsDetail.vue')
     },
     {
-      path: '/personalPage',
+      path: '/personalPage/:id',
       name: 'personalPage',
       component: () => import('./components/common/PersonalPage.vue')
     },
@@ -117,6 +117,11 @@ export default new Router({
       component: () => import('./components/mePage/Comments.vue')
     },
     {
+      path: '/addcoursecomments',
+      name: 'addcoursecomments',
+      component: () => import('./components/mePage/coursePage/AddCourseComment.vue')
+    },
+    {
       path: '/notify',
       name: 'notify',
       component: () => import('./components/mePage/notifyPage/NotifyPage.vue')
@@ -127,7 +132,7 @@ export default new Router({
       component: () => import('./components/mePage/MyVenuePage.vue')
     },
     {
-      path: '/venuedetail',
+      path: '/venuedetail/:id',
       name: 'venuedetail',
       component: () => import('./components/venuePage/VenueDetail.vue')
     },
@@ -176,7 +181,7 @@ export default new Router({
       component: () => import('./components/mePage/pursePage/DepositLog.vue')
     },
     {
-      path: '/signcoach',
+      path: '/signcoach/:id',
       name: 'signcoach',
       component: () => import('./components/coachPage/SignCoach.vue')
     }

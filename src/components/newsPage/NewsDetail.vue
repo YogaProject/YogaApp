@@ -2,7 +2,7 @@
   <div>
     <!-- 滚动+评论header吸附上方 -->
     <!-- cube-page -->
-    <cube-page title="动态正文" showBack="true">
+    <cube-page title="动态正文" showBack>
       <div slot="content">
         <div class="view-wrapper">
           <cube-sticky :pos="scrollY">
@@ -13,11 +13,11 @@
                   <!-- 头像 -->
                   <div class="avatar" @click="goPage"></div>
                   <!-- 用户昵称 -->
-                  <span class="name">{{content.name}}</span>
+                  <span class="name">{{content.userNickName}}</span>
                   <!-- vip -->
-                  <i class="cubeic-vip">vip2</i>
+                  <i class="cubeic-vip">vip{{content.userLevel}}</i>
                   <!-- 日期+时间 -->
-                  <span class="date">2019/4/24 15:15</span>
+                  <span class="date">{{content.publishTime}}</span>
                 </header>
                 <div class="picture" @click="showImagePreview">
                   <!-- 图片展示 -->
@@ -25,7 +25,7 @@
                 </div>
                 <div class="message">
                   <!-- 文字内容 -->
-                  <p>{{content.text}}</p>
+                  <p>{{content.content}}</p>
                 </div>
                 <!-- 定位 -->
                 <footer>
@@ -35,7 +35,7 @@
               <cube-sticky-ele ele-key="评论">
                 <ul class="sticky-header">
                   <li class="ele">
-                    评论 {{content.commentCount}} | 赞 {{content.goodCount}}
+                    评论 {{content.commentCount}} 
                     <!-- <i class="cubeic-good"></i> -->
 
                     <i class="cubeic-message" @click="addcomment">发评论</i>
@@ -44,30 +44,30 @@
               </cube-sticky-ele>
               <!-- ul替换评论卡片div -->
 
-              <div class="comments" v-for="item in items" :key="item">
+              <div class="comments" v-for="item in comment" :key="item.commentId">
                 <!-- 评论者头像 -->
                 <header class="info">
                   <div class="avatar" @click="goPage"></div>
                   <!-- 评论者昵称 -->
                   <span class="name">
-                    阿云嘎
+                    {{item.userNickName}}
                     <i class="cubeic-vip">vip2</i>
                   </span>
                 </header>
                 <!-- 评论内容 -->
                 <div class="context">
-                  <span class="text">{{item}}</span>
+                  <span class="text">{{item.commentDetail}}</span>
                   <!-- 评论的评论（若无则不显示，若大于五条则显示是否展开） -->
-                  <div class="inner-comm" v-if="showInner">
-                    <p>
-                      <span class="inner-name">{{content.name}}:</span>
-                      {{content.text}}
+                  <div class="inner-comm" v-if="item.children.length!=0">
+                    <p v-for="child in item.children" :key="child.commentId">
+                      <span class="inner-name">{{child.userNickName}}:</span>
+                      {{child.commentDetail}}
                     </p>
                   </div>
                 </div>
                 <!-- 评论时间 -->
                 <p class="time">
-                  <span>4-24 08:22</span>
+                  <span>{{item.commentCreateTime}}</span>
                   <span class="cubeic-message" @click="addcomment"></span>
                 </p>
               </div>
@@ -82,20 +82,7 @@
 <script>
 import CubePage from "@/components/common/cube-page.vue";
 
-const _data = [
-  "11111111111111111 ",
-  "2222222222222222222222",
-  "3333333333333333333333 ",
-  "4444444444444444444444444 ",
-  "🐣 🐣 🐣 🐣 🐣 🐣 ",
-  "55555555555555555 ",
-  "🐥 🐥 🐥 🐥 🐥 🐥 ",
-  "6666666666666666666 ",
-  "777777777777777777 ",
-  "8888888888888888888888 ",
-  "🙈 🙈 🙈 🙈 🙈 🙈 ",
-  "9999999999999999999999 "
-];
+
 export default {
   name: "newsDetail",
   components: {
@@ -105,18 +92,25 @@ export default {
     return {
       scrollEvents: ["scroll"],
       scrollY: 0,
-      items: _data.concat(),
       showInner: true,
       content: {
-        name: "蔡程昱",
-        title: "大家一起来",
-        commentCount: "1000",
-        goodCount: "2000",
-        img: [],
-        text:
-          "哈哈哈哈哈哈哈哈或或或或或或或哈哈哈哈哈哈哈哈或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或或"
-      }
+       
+      },
+      comment:[],
     };
+  },
+  mounted() {
+    let mid = this.$route.params.id;
+    console.log(mid);
+    this.$post("/api/homepage/showHomepageDetail", mid).then(res => {
+      console.log(res.data);
+      this.content = res.data;
+    });
+
+    this.$post("/api/comment/showComments", mid).then(res => {
+      console.log(res.data);
+      this.comment = res.data;
+    });
   },
   methods: {
     //！！ 获取数据时判断有没有children，若有showInner为真
@@ -176,7 +170,7 @@ export default {
 }
 /* 动态发布时间 */
 .date {
-  margin-left: 130px;
+  margin-left: 170px;
   color: #ccc;
 }
 /* 动态标题 */

@@ -57,9 +57,10 @@ export default {
       ]
     };
   },
+  mounted(){},
   methods: {
     handleClick(id){
-      this.$router.push('/venuedetail')
+      this.$router.push({path:`/venuedetail/${id}`})
     },
     onPullingDown() {
       // 模拟更新数据

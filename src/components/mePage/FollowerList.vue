@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- cube-page  -->
-    <cube-page :title="title" showBack="true">
+    <cube-page :title="title" showBack>
       <div slot="content">
         <div class="view-wrapper">
           <cube-scroll
@@ -19,11 +19,11 @@
               <li class="column">
                 <div class="avatar"></div>
                 <span>
-                  {{item.name}}
-                  <i class="cubeic-vip">{{item.userLevel}}</i>
+                  {{item.userNickName}}
+                  <i class="cubeic-vip">vip{{item.userLevel}}</i>
                 </span>
-                <span class="is follow" v-if="!item.isfollow && role==='me'">互相关注</span>
-                <span class="not follow" v-if="item.isfollow && role==='me'" @click="follow"><i class="cubeic-add"></i>关注</span>
+                <span class="is follow" v-if="item.followStatus===1">互相关注</span>
+                <span class="not follow" v-if="item.followStatus!=1" @click="follow(item.userId)"><i class="cubeic-add"></i>关注</span>
               </li>
             </ul>
           </cube-scroll>
@@ -42,111 +42,11 @@ export default {
   },
   data() {
     return {
+      clearable:{},
+      search:'',
       role:'',
       title: "我的粉丝",
       list: [
-        {
-          id: 1,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 2,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 3,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 4,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: false
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        },
-        {
-          id: 5,
-          name: "王凯",
-          userLevel: "vip4",
-          isfollow: true
-        }
       ]
     };
   },
@@ -159,9 +59,25 @@ export default {
       };
     }
   },
+  mounted(){
+ this.getList();
+  },
   methods: {
-      follow(){
+    getList(){   this.$post('/api/follow/showFollowList',0).then(res=>{
+      if(res.code===1){
+      this.list = res.data;
+      }
+    })},
+      follow(userId){
         //   关注此人
+        this.$post('/api/follow/addFollow',userId).then(res=>{
+          const toast = this.$createToast({
+          txt: res.message,
+          type: "correct"
+        });
+        toast.show();
+        this.getList();
+        })
       },
     onPullingDown() {
       // 模拟更新数据

@@ -1,6 +1,6 @@
 <template>
   <div class="box" ref="box">
-    <cube-form v-model="user" @submit="submitHandler" class="loginForm">
+    <cube-form v-model="user" @submit="submitHandler" @validate="validateHandler" class="loginForm">
       <cube-form-group class="inputBox">
         <cube-form-item :field="fields[0]"></cube-form-item>
         <cube-form-item :field="fields[1]"></cube-form-item>
@@ -20,14 +20,16 @@ export default {
   name: "EmailBox",
   data() {
     return {
+      validity: {},
+      valid: undefined,
       user: {
-        username: "",
-        password: ""
+        userEmail: "",
+        userPwd: ""
       },
       fields: [
         {
           type: "input",
-          modelKey: "username",
+          modelKey: "userEmail",
           props: {
             placeholder: "邮箱",
             clearable: {
@@ -40,12 +42,12 @@ export default {
           rules: {
             required: true,
             notWhitespace: true,
-            pattern: / /
+            type: "email"
           }
         },
         {
           type: "input",
-          modelKey: "password",
+          modelKey: "userPwd",
           props: {
             type: "password",
             placeholder: "请输入密码",
@@ -70,9 +72,29 @@ export default {
   },
 
   methods: {
-    submitHandler(e) {},
+    submitHandler(e, model) {
+      e.preventDefault();
+      console.log(model);
+      // 邮箱登陆
+      this.$post("/api/userApp/loginByEmailAndPwd", {
+        user: model
+      }).then(res => {
+        console.log(res);
+      });
+    },
     goRegister() {
       this.$emit("goRegister");
+    },
+    validateHandler(result) {
+      this.validity = result.validity;
+      this.valid = result.valid;
+      console.log(
+        "validity",
+        result.validity,
+        result.valid,
+        result.dirty,
+        result.firstInvalidFieldIndex
+      );
     },
     showPrompt() {
       this.dialog = this.$createDialog({

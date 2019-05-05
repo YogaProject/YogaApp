@@ -8,9 +8,11 @@
           <!-- 头像、昵称、vip -->
           <div class="meBox">
             <div class="avatar"></div>
-            <span class="name">余笛</span>
-            <i class="cubeic-vip">vip2</i>
+            <span class="name">{{user.realName}}</span>
+            <i class="cubeic-vip">vip{{user.level}}</i>
+            <p>{{user.detail}}</p>
           </div>
+
           <!-- 关注、粉丝、动态、交易入口 -->
           <div class="entrance">
             <div class="block">
@@ -37,7 +39,7 @@
             <P>微信：{{user.wechat}}</P>
           </div>
         </div>
-        <cube-button @click="goSignCoach(user.id)" class="btn">约私教</cube-button>
+        <cube-button @click="goSignCoach()" class="btn">约私教</cube-button>
       </div>
     </cube-page>
   </div>
@@ -55,6 +57,7 @@ export default {
       perm: "ok",
       clientHeight: "",
       student: false,
+      userId:'',
       user: {
         id: "",
         phone: "",
@@ -65,10 +68,16 @@ export default {
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
+    this.userId = this.$route.params.id;
+    this.$post('/api/user/getDetailInfoByUserId', this.userId).then(res=>{
+      console.log(res.data);
+      this.user = res.data;
+    })
+    
   },
   methods: {
-    goSignCoach(id) {
-      this.$router.push({path:"/signcoach"})
+    goSignCoach() {
+      this.$router.push({path:`/signcoach/${this.userId}`})
     }
   }
 };
