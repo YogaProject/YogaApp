@@ -12,16 +12,22 @@
             @pulling-down="onPullingDown"
             @pulling-up="onPullingUp"
           >
+            <p class="warn" v-if="coupons.length===0">亲您还没有优惠券哦</p>
             <ul v-for="item in coupons" :key="item.id">
-              <li v-if="item.couponstatus===0?color='#55efc4':color='#ccc'" :style="{'background-color':color}">
-                <div class="all" >
+              <li
+                v-if="item.couponstatus===0?color='#55efc4':color='#ccc'"
+                :style="{'background-color':color}"
+              >
+                <div class="all">
                   <div class="info">
-                    <span class="title">{{item.title}}</span>
+                    <span class="title">代金券</span>
                     <span class="discount">{{item.faceValue}}元</span>
                   </div>
                   <div class="content">
                     <p>有效日期：{{item.effectiveDate}}至{{item.expirationDate}}</p>
-                    <p><i class="cubeic-warn">最终解释权归商家所有</i></p>
+                    <p>
+                      <i class="cubeic-warn">最终解释权归商家所有</i>
+                    </p>
                   </div>
                 </div>
               </li>
@@ -42,26 +48,39 @@ export default {
   },
   data() {
     return {
-      color:'',
+      color: "",
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
       coupons: [
-        {
-          id: "1",
-          title: "优惠券",
-          faceValue: "9.8",
-          effectiveDate: "2018-08-09",
-          expirationDate: "2019-08-09",
-          couponstatus: 1
-        }
+        // {
+        //   id: "1",
+        //   title: "优惠券",
+        //   faceValue: "9.8",
+        //   effectiveDate: "2018-08-09",
+        //   expirationDate: "2019-08-09",
+        //   couponstatus: 1
+        // }
       ]
     };
   },
-  mounted(){
-
+  mounted() {
+    let userId = sessionStorage.getItem("userId");
+    this.$post("/api/wallet/selectcoupon", userId).then(res => {
+      if (res.code === 1) {
+        console.log(res.message);
+        this.coupons = res.data;
+      } else {
+        console.log(res.message);
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "txt"
+        });
+        toast.show();
+      }
+    });
   },
   methods: {
     onPullingDown() {
@@ -101,7 +120,10 @@ export default {
   width: 100%;
   background-color: #eee;
 }
-
+.warn {
+  font-size: 16px;
+  color: #bbb;
+}
 li {
   min-height: 150px;
   font-size: 16px;
@@ -154,8 +176,8 @@ li {
   word-wrap: break-word;
 }
 
-.cubeic-warn{
-  color:#bbb;
-  font-size:14px;
+.cubeic-warn {
+  color: #bbb;
+  font-size: 14px;
 }
 </style>

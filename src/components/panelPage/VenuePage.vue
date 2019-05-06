@@ -5,15 +5,9 @@
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
-          <cube-scroll
-            ref="scroll"
-            :data="venues"
-            :options="options"
-            @pulling-down="onPullingDown"
-            @pulling-up="onPullingUp"
-          >
-            <cube-input v-model="search" :clearable="clearable" placeholder="搜索">
-              <i slot="append" class="cubeic-search" @click="search(search)"></i>
+    
+            <cube-input v-model="searchValue" :clearable="clearable" placeholder="搜索">
+              <i slot="append" class="cubeic-search" @click="search(searchValue)"></i>
             </cube-input>
             <baidu-map
               class="map"
@@ -23,7 +17,7 @@
             >
               <bm-marker
                 v-for="item in venues"
-                :key="item"
+                :key="item.userId"
                 :position="{lng:item.longitude,lat:item.latitude}"
                 :dragging="false"
                 animation="BMAP_ANIMATION_BOUNCE"
@@ -35,15 +29,16 @@
                   @close="infoWindowClose"
                   @open="infoWindowOpen"
                   class="window"
-                  @click="goDetail(venues[0].id)"
                 >
-                  <div class="avatar" @click="goDetail(item.userId)"></div>
-                  <p class="name">{{item.realName}}</p>
-                  <p>{{item.clicks}}</p>
+                  <div class="left">
+                    <div class="avatar" @click="goDetail(item.userId)"></div>
+                    <p class="name">{{item.realName}}</p>
+                    <p>{{item.clicks}}</p>
+                  </div>
+               
                 </bm-info-window>
               </bm-marker>
             </baidu-map>
-          </cube-scroll>
         </div>
       </div>
     </cube-page>
@@ -60,7 +55,8 @@ export default {
   data() {
     return {
       show: false,
-      search: "",
+      clearable: {},
+      searchValue: "",
       clientHeight: "",
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
@@ -68,14 +64,12 @@ export default {
         scrollbar: true
       },
       mylocation: { lng: 104.0, lat: 30.582 },
-      venues: [
-    
-      ]
+      venues: []
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
-     let location = {
+    let location = {
       latitude: this.mylocation.lat,
       longitude: this.mylocation.lng
     };
@@ -85,15 +79,15 @@ export default {
       if (res.code === 1) {
         this.venues = res.data;
         console.log(this.venues);
-        
-      }else{
+      } else {
         // 查询不到添加提示
       }
     });
   },
   methods: {
     goDetail(id) {
-      this.$router.push({ path: "/venuedetail" });
+      console.log(id);
+      this.$router.push({ path: `/venuedetail/${id}` });
     },
     infoWindowClose() {
       this.show = false;
@@ -101,25 +95,10 @@ export default {
     infoWindowOpen() {
       this.show = true;
     },
-    search(search) {},
-    handleClick(id) {},
-    onPullingDown() {
-      // 模拟更新数据
-   this.$fetch('/api/')
+    search(searchValue) {
+      console.log("searchValue");
     },
-    onPullingUp() {
-      // 模拟更新数据
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          // 如果有新数据
-          let newPage = _foods.slice(0, 5);
-          this.items = this.items.concat(newPage);
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate();
-        }
-      }, 1000);
-    }
+
   }
 };
 </script>

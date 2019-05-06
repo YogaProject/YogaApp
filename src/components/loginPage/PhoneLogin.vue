@@ -66,7 +66,7 @@ export default {
             maxlength: 6
           },
           rules: {
-            required: true,
+            // required: true,
             type: "number"
           }
         }
@@ -95,31 +95,40 @@ export default {
     submitHandler(e, model) {
       e.preventDefault();
       console.log(model);
-      if (model.userVerifyCode === undefined) {
+      if (model.userVerifyCode === undefined || model.userVerifyCode === "") {
         // 获取手机登陆验证码
-        this.$post("/api/userApp/sendLoginPhonePwd", {
-          user: model
-        }).then(res => {
+        this.$post("/api/userApp/sendLoginPhonePwd", model).then(res => {
           console.log(res);
         });
       } else {
         // 通过手机登陆
-        this.$post("/api/userApp/loginByPhoneAndCode", {
-          user: model
-        }).then(res => {
+        this.$post("/api/userApp/loginByPhoneAndCode", model).then(res => {
           console.log(res);
-          if (res.code === 1) {
-            // 注册成功，获取身份信息，将身份信息存到store里,封装？
-            sessionStorage.setItem("userName", res.data.userPhone);
-            // 将用户名和token放入vuex
-            this.$store.dispatch("setUser", res.data);
-            const toast = this.$createToast({
-              txt: "Correct",
-              type: "correct"
-            });
-            toast.show();
-            this.$router.push({ path: "/main/newspage" });
-          }
+              if (res.code === 1) {
+          // 注册成功，获取身份信息，将身份信息存到store里,封装？
+          let user = res.data;
+          sessionStorage.setItem("userId", user.userId);
+          sessionStorage.setItem("roleId", user.roleId);
+          sessionStorage.setItem("nickName", user.userNickname);
+          sessionStorage.setItem("userLevel", user.userLevel);
+          sessionStorage.setItem("userimg", user.userHeadImg);
+
+          console.log("roleId" + sessionStorage.getItem("roleId"));
+          // 将用户名和token放入vuex
+          this.$store.dispatch("setUser", res.data);
+          const toast = this.$createToast({
+            txt: res.message,
+            type: "correct"
+          });
+          toast.show();
+          this.$router.push({ path: "/main/newspage" });
+        } else {
+          this.toast = this.$createToast({
+            txt: res.message,
+            type: "txt"
+          });
+          this.toast.show();
+        }
         });
       }
     },

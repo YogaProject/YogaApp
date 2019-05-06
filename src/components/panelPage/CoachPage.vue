@@ -6,12 +6,7 @@
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
           <!-- 搜索框 -->
-          <cube-input
-            v-model="searchValue"
-            :clearable="clearable"
-            placeholder="搜索"
-            
-          >
+          <cube-input v-model="searchValue" :clearable="clearable" placeholder="搜索">
             <i slot="append" class="cubeic-search" @click="search(searchValue)"></i>
           </cube-input>
           <baidu-map
@@ -30,13 +25,12 @@
               :position="{lng:item.longitude,lat:item.latitude}"
               :dragging="false"
               animation="BMAP_ANIMATION_BOUNCE"
-              @click="infoWindowOpen"
+              @click="WindowOpen(item)"
             >
               <!-- <bm-label content="教练A" :offset="{width: -35, height: 30}"/> -->
               <bm-info-window
                 :show="show"
-                :key="item.userId"
-                :positon="{lng:item.longitude,lat:item.latitude}"
+                :position="windowPosition"
                 @close="infoWindowClose"
                 @open="infoWindowOpen"
                 class="window"
@@ -67,10 +61,12 @@ export default {
   data() {
     return {
       mylocation: { lng: 104.0, lat: 30.582 },
+      windowPosition: { lng: 0, lat: 0 },
       clearable: {
         visible: true,
         blurHidden: false
       },
+      windowInfo: {},
       searchValue: "",
       clientHeight: "",
       options: {
@@ -78,7 +74,7 @@ export default {
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
-      show: false,
+      show: true,
       list: []
     };
   },
@@ -92,7 +88,11 @@ export default {
       console.log("data:" + res.data);
 
       if (res.code === 1) {
-        this.list = res.data;
+        for (let i = 0; i < res.data.length; i++) {
+          let item = res.data[i];
+          item.show = false;
+          this.list.push(item);
+        }
         console.log(this.list);
       }
     });
@@ -114,37 +114,23 @@ export default {
     goDetail(id) {
       this.$router.push({ path: `/personalPage/${id}` });
     },
-    handleClick(id) {},
     infoWindowClose() {
       this.show = false;
+      this.windowInfo = {};
+      this.windowPosition.lng = 0;
+      this.windowPosition.lat = 0;
+      console.log("close" + this.windowPosition.lng);
+    },
+    WindowOpen(item) {
+      this.windowInfo = item;
+      this.windowPosition.lng = item.longitude;
+      this.windowPosition.lat = item.latitude;
+      this.show = true;
+      console.log("open1 " + this.windowPosition.lng);
     },
     infoWindowOpen() {
       this.show = true;
-    },
-    onPullingDown() {
-      // 模拟更新数据
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          // 如果有新数据
-          this.items.unshift(_foods[1]);
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate();
-        }
-      }, 1000);
-    },
-    onPullingUp() {
-      // 模拟更新数据
-      setTimeout(() => {
-        if (Math.random() > 0.5) {
-          // 如果有新数据
-          let newPage = _foods.slice(0, 5);
-          this.items = this.items.concat(newPage);
-        } else {
-          // 如果没有新数据
-          this.$refs.scroll.forceUpdate();
-        }
-      }, 1000);
+      console.log("open2 " + this.windowPosition.lng);
     }
   }
 };

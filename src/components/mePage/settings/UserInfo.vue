@@ -1,6 +1,6 @@
 <template>
   <div>
-    <cube-page title="信息完善" showBack="true">
+    <cube-page title="信息完善" showBack>
       <span slot="rightbtn" @click="submitHandler" class="rightbtn">提交</span>
 
       <div slot="content">
@@ -12,6 +12,7 @@
             :immediate-validate="false"
             :options="options"
             @validate="validateHandler"
+            @submit="submitHandler"
           ></cube-form>
         </div>
       </div>
@@ -34,13 +35,12 @@ export default {
         scrollToInvalidField: true,
         layout: "standard" // classic fresh
       },
+      imgurl: "",
       model: {
-        imgurl: "",
-        UserEmail: "",
         UserPhone: "",
         UserIdcard: "",
         UserRealname: "",
-        UserGender: "",
+        UserSex: "",
         UserNickname: "",
         uploadValue: []
       },
@@ -50,34 +50,34 @@ export default {
             type: "upload",
             modelKey: "uploadValue",
             label: "头像",
+            props: {
+              action: {
+                target: "/api/upload/newFile",
+                fileName: "file",
+                data: {
+                  // token: 'token'
+                },
+                checkSuccess: (res, file) => {
+                  if (res.code === 1) {
+                    this.imgurl = res.data;
+                    console.log("res", this.imgurl);
+
+                    return true;
+                  }
+                  return true;
+                }
+              },
+              max: 1
+            },
             events: {
               "file-removed": (...args) => {
                 console.log("file removed", args);
-              }
-            },
-            rules: {
-              required: true,
-              uploaded: (val, config) => {
-                return Promise.all(
-                  val.map((file, i) => {
-                    return new Promise((resolve, reject) => {
-                      if (file.uploadedUrl) {
-                        return resolve();
-                      }
-                      //   fake request
-                      setTimeout(() => {
-                        if (i % 2) {
-                          reject(new Error());
-                        } else {
-                          file.uploadedUrl = "uploaded/url";
-                          resolve();
-                        }
-                      }, 1000);
-                    });
-                  })
-                ).then(() => {
-                  return true;
-                });
+              },
+              "files-added": (...args) => {
+                console.log("add", args);
+              },
+              "file-submitted": file => {
+                console.log("file-submitted-file", file);
               }
             },
             messages: {
@@ -98,21 +98,8 @@ export default {
             // validating when blur
             trigger: "blur"
           },
-          {
-            type: "input",
-            modelKey: "UserEmail",
-            label: "邮箱",
-            props: {
-              placeholder: "请输入",
-              type: "email"
-            },
-            rules: {
-              required: true
-            },
-            // validating when blur
-            trigger: "blur"
-          },
-         
+        
+
           {
             type: "input",
             modelKey: "UserIdcard",
@@ -148,7 +135,7 @@ export default {
           },
           {
             type: "radio-group",
-            modelKey: "UserGender",
+            modelKey: "UserSex",
             label: "性别",
             rules: {
               required: true
@@ -167,9 +154,21 @@ export default {
     };
   },
   methods: {
-    submitHandler(e) {
+    submitHandler(e, model) {
       e.preventDefault();
       console.log("submit", e);
+      let user = {
+        userHeadimg: this.imgurl,
+        idcard: model.UserIdcard,
+        realName: model.UserRealname,
+        sex: model.UserSex,
+        userNickname: model.UserNickname
+      };
+      this.$post("/api/userApp/updateStudentInfo", user).then(res => {
+        if (res.code === 1) {
+          console.log(res.message);
+        }
+      });
     },
     validateHandler(result) {
       this.validity = result.validity;

@@ -3,6 +3,7 @@ import Cube from 'cube-ui'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import store from './vuex/store'
 import 'amfe-flexible'
 import BaiduMap from 'vue-baidu-map'
 import { post, fetch, patch, put } from './utils/http'
@@ -20,5 +21,6 @@ Vue.prototype.$patch = patch
 Vue.prototype.$put = put
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

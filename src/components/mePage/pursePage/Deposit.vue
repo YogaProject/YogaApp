@@ -8,8 +8,10 @@
           <cube-checker v-model="checkerValue" :options="options" type="radio"/>
           <div class="alipay" @click="alipay">支付宝充值</div>
           <footer>
-            <p><i class='cubeic-warn'></i>充值不退款</p>
-            </footer>
+            <p>
+              <i class="cubeic-warn"></i>充值不退款
+            </p>
+          </footer>
         </div>
       </div>
     </cube-page>
@@ -28,35 +30,48 @@ export default {
       checkerValue: "",
       options: [
         {
-          value: 0,
+          value: 30,
           text: "￥30"
         },
         {
-          value: 1,
+          value: 50,
           text: "￥50"
         },
         {
-          value: 2,
+          value: 100,
           text: "￥100"
         },
         {
-          value: 3,
+          value: 300,
           text: "￥300"
         },
         {
-          value: 4,
+          value: 500,
           text: "￥500"
         },
         {
-          value: 5,
+          value: 1200,
           text: "￥1200"
         }
       ]
     };
   },
   methods: {
-    alipay(){
+    alipay() {
       // 第三方接口
+      this.$post("/api/wallet/alipay", this.checkerValue).then(res => {
+        // let routerData = this.$router.resolve({
+        //   path: "/ finance / applyText",
+        //   query: { htmls: res}
+        // });
+        // this.htmls = res; //打开新页面
+
+        // window.open(routerData.href, "_ blank");
+        // const div = document.createElement("div");
+        // div.innerHTML = htmls;
+        // document.body.appendChild(div);
+        // document.forms[0].submit();
+      });
     }
   }
 };
@@ -81,16 +96,16 @@ export default {
   margin-top: 30px;
 }
 
-footer{
+footer {
   position: absolute;
   bottom: 10px;
   font-size: 15px;
-  color:#ccc;
+  color: #ccc;
 }
 
-footer p{
+footer p {
   text-align: center;
-padding-left:150px;
+  padding-left: 150px;
 }
 </style>
 <style>

@@ -7,7 +7,7 @@
         <cube-form-item :field="fields[2]"></cube-form-item>
       </cube-form-group>
       <cube-form-group>
-        <cube-button type="submit" class="btn">获取验证码</cube-button>
+        <cube-button type="submit" class="btn">获取密码</cube-button>
         <cube-button type="submit" :primary="true" class="btn">注册</cube-button>
       </cube-form-group>
     </cube-form>
@@ -20,19 +20,28 @@ export default {
     return {
       model: {
         userPhone: "",
-        userVerifyCode: "",
-        roleName: ""
+        userPwd: "",
+        roleId: ""
       },
       fields: [
         {
           type: "radio-group",
-          modelKey: "roleName",
+          modelKey: "roleId",
           label: "身份",
           rules: {
             required: true
           },
           props: {
-            options: ["教练", "学员"]
+            options: [
+              {
+                label: "教练",
+                value: 2
+              },
+              {
+                label: "学员",
+                value: 1
+              }
+            ]
           }
         },
         {
@@ -56,10 +65,10 @@ export default {
         },
         {
           type: "input",
-          modelKey: "userVerifyCode",
-          label: "验证码",
+          modelKey: "userPwd",
+          label: "密码",
           props: {
-            placeholder: "请输入验证码",
+            placeholder: "请输入密码",
             clearable: {
               visible: true,
               blurHidden: false
@@ -68,7 +77,7 @@ export default {
             maxlength: 6
           },
           rules: {
-            required: true,
+            // required: true,
             type: "number"
           }
         }
@@ -79,35 +88,40 @@ export default {
     submitHandler(e, model) {
       e.preventDefault();
       console.log(model);
-      if (model.userVerifyCode === undefined) {
+      if (model.userPwd === undefined || model.userPwd === "") {
         // 获取手机验证码
-        this.$post("/api/userApp/sendRegPhonePwd", {
-          user: model
-        }).then(res => {
+        this.$post("/api/userApp/sendRegPhonePwd", model).then(res => {
           console.log(res);
         });
       } else {
         // 通过手机注册
-        this.$post("/api/userApp/regByPhone", {
-          user: {
-            userPhone: model.userPhone,
-            userVerifyCode: model.userVerifyCode
-          },
-          roleName: model.roleName
-        }).then(res => {
+        this.$post("/api/userApp/regByPhone", model).then(res => {
           console.log(res);
-          if (res.code === 1) {
-            // 注册成功，获取身份信息，将身份信息存到store里,封装？
-            sessionStorage.setItem("userName", res.data.userId);
-            // 将用户名和token放入vuex
-            this.$store.dispatch("setUser", res.data);
-            const toast = this.$createToast({
-              txt: "Correct",
-              type: "correct"
-            });
-            toast.show();
-            this.$router.push({ path: "/main/newspage" });
-          }
+             if (res.code === 1) {
+          // 注册成功，获取身份信息，将身份信息存到store里,封装？
+          let user = res.data;
+          sessionStorage.setItem("userId", user.userId);
+          sessionStorage.setItem("roleId", user.roleId);
+          sessionStorage.setItem("nickName", user.userNickname);
+          sessionStorage.setItem("userLevel", user.userLevel);
+          sessionStorage.setItem("userimg", user.userHeadImg);
+
+          console.log("roleId" + sessionStorage.getItem("roleId"));
+          // 将用户名和token放入vuex
+          this.$store.dispatch("setUser", res.data);
+          const toast = this.$createToast({
+            txt: res.message,
+            type: "correct"
+          });
+          toast.show();
+          this.$router.push({ path: "/main/newspage" });
+        } else {
+          this.toast = this.$createToast({
+            txt: res.message,
+            type: "txt"
+          });
+          this.toast.show();
+        }
         });
       }
     }

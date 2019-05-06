@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <!-- cube-page  -->
     <cube-page title="我的钱包" showBack="true">
       <div slot="content">
@@ -12,19 +12,19 @@
           </div>
           <!-- 充值提现 -->
           <div class="deposit">
-             <div class="column">
+            <!-- <div class="column">
               <router-link to="/deposit">
-               绑定银行卡
+                绑定银行卡
                 <i class="cubeic-arrow"/>
               </router-link>
-            </div>
+            </div> -->
             <div class="column">
               <router-link to="/deposit">
                 充值
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column" v-if="role==='coach'">
+            <div class="column" v-if="role===2">
               <router-link to="/withdraw">
                 提现
                 <i class="cubeic-arrow"/>
@@ -62,10 +62,25 @@ export default {
   data() {
     return {
       data: {
-        role:'',
+        role: "",
         remain: "30"
       }
     };
+  },
+  mounted() {
+    this.data.role = sessionStorage.getItem("roleId")
+    let userId = sessionStorage.getItem("userId");
+    this.$post("/api/wallet/selectwallet", userId).then(res => {
+      if (res.code === 1) {
+        this.data.remain = res.data.balance;
+      } else {
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "txt"
+        });
+        toast.show();
+      }
+    });
   },
   methods: {}
 };
@@ -77,24 +92,23 @@ export default {
   left: 0;
   bottom: 0;
   width: 100%;
-  font-size:16px;
+  font-size: 16px;
   background-color: #eee;
 }
 
-.remain{
-    height:120px;
-    line-height: 40px;
-    box-shadow: 0 0 5px #aaa;
-    margin-bottom: 20px;
+.remain {
+  height: 120px;
+  line-height: 40px;
+  box-shadow: 0 0 5px #aaa;
+  margin-bottom: 20px;
   background-color: #fff;
-
 }
-.name{
-    padding-top: 20px;
-    text-align: left;
-    margin-left:40px;
-    font-size:20px;
-    font-weight:700;
+.name {
+  padding-top: 20px;
+  text-align: left;
+  margin-left: 40px;
+  font-size: 20px;
+  font-weight: 700;
 }
 .column {
   /* border:1px solid red; */

@@ -1,16 +1,16 @@
 <template>
-    <div>
-        <cube-page title="设置" showBack="true">
+  <div>
+    <cube-page title="设置" showBack>
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
           <div class="list">
-            <div class="column info" >
-               <router-link to="/userinfo" v-if="role==='user'"> 
+            <div class="column info">
+              <router-link to="/userinfo" v-if="role==1">
                 个人信息
                 <i class="cubeic-arrow"/>
               </router-link>
-              <router-link to="/coachinfo" v-if="role==='coach'">
+              <router-link to="/coachinfo" v-if="role==2">
                 个人信息
                 <i class="cubeic-arrow"/>
               </router-link>
@@ -27,7 +27,7 @@
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-    
+
             <div class="column">
               <router-link to="/coachorder">
                 关于
@@ -35,26 +35,39 @@
               </router-link>
             </div>
           </div>
-
+          <div class="column" @click="logout">
+            登出
+            <i class="cubeic-arrow"/>
+          </div>
         </div>
-        </div>
-        </cube-page>
-    </div>
+      </div>
+    </cube-page>
+  </div>
 </template>
 <script>
 import CubePage from "@/components/common/cube-page.vue";
 
 export default {
-    name: "settings",
+  name: "settings",
   components: {
     "cube-page": CubePage
   },
-    data(){
-      return{
-role:'coach'
-      }
+  data() {
+    return {
+      role: ""
+    };
+  },
+  mounted(){
+    this.role = sessionStorage.getItem('roleId');
+    console.log("role:"+this.role);
+  },
+  methods:{
+    logout(){
+      sessionStorage.setItem('currentUser','');
+      this.$router.push('/login');
     }
-}
+  }
+};
 </script>
 <style scoped>
 .view-wrapper {

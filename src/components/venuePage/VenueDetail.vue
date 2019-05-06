@@ -14,13 +14,13 @@
             <div>
               <div class="content">
                 <cube-slide :data="items"/>
-                <p class="title">{{data.name}}</p>
+                <p class="title">{{data.realName}}</p>
                 <p class="click">点击量：{{data.clicks}}</p>
                 <p class="location">
-                  <i class="cubeic-location" @click="openMap">{{data.location}}</i>
+                  <i class="cubeic-location" @click="openMap">{{data.userLocation}}</i>
                 </p>
                 <p class="content">{{data.content}}</p>
-                <cube-button @click="goSign" v-if="role==='coach'">签约场馆</cube-button>
+                <cube-button @click="goSign(data.userId)" v-if="role==='2'">签约场馆</cube-button>
               </div>
             </div>
           </cube-scroll>
@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      role: "coach",
+      role: "",
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
         pullUpLoad: this.pullUpLoadObj,
@@ -72,10 +72,58 @@ export default {
     };
   },
   mounted() {
+    this.role = sessionStorage.getItem("roleId");
     let id = this.$route.params.id;
-
+    this.$post("/api/user/getVenueDetailInfoByUserId", id).then(res => {
+      if (res.code === 1) {
+        this.data = res.data;
+      }
+    });
   },
   methods: {
+    goSign(uesrId) {
+      this.$createDialog({
+        type: "confirm",
+        icon: "cubeic-alert",
+        title: "签约场馆",
+        content: "确定签约此场馆吗？",
+        confirmBtn: {
+          text: "确定按钮",
+          active: true,
+          disabled: false
+        },
+        cancelBtn: {
+          text: "取消按钮",
+          active: false,
+          disabled: false
+        },
+        onConfirm: () => {
+          this.$post("/api/coach/applyForSign", uesrId).then(res => {
+            if (res.code === 1) {
+              this.$createToast({
+                type: "warn",
+                time: 3000,
+                txt: "已发送签约申请"
+              }).show();
+            }
+            else{
+              this.$createToast({
+                type: "warn",
+                time: 1000,
+                txt: res.message
+              }).show();
+            }
+          });
+        },
+        onCancel: () => {
+          this.$createToast({
+            type: "warn",
+            time: 1000,
+            txt: "点击取消按钮"
+          }).show();
+        }
+      }).show();
+    },
     openMap(location) {},
     onPullingDown() {
       // 模拟更新数据

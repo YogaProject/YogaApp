@@ -2,7 +2,7 @@
 <template>
   <div :style="{height:clientHeight-50+'px'}">
     <!-- cube-page  -->
-    <cube-page title="我(教练)">
+    <cube-page title="我">
       <i slot="leftbtn" class="cubeic-setting" @click="goSetting"></i>
       <i slot="rightbtn" class="cubeic-email" @click="goMessage"></i>
 
@@ -10,10 +10,10 @@
         <div class="view-wrapper">
           <!-- 头像、昵称、vip -->
           <div class="meBox">
-            <div class="avatar"></div>
-            <span class="name">{{data.realName}}</span>
-            <i class="cubeic-vip">11</i>
-            <p>{{data.detail}}</p>
+            <div class="avatar" :style="{backgroundImage: 'url(' + (userImg|| '') + ')'}"></div>
+            <span class="name">{{nickName}}</span>
+            <i class="cubeic-vip">vip{{userLevel}}</i>
+            <p></p>
           </div>
           <!-- 关注、粉丝、动态、交易入口 -->
           <div class="entrance">
@@ -32,7 +32,7 @@
                 <p class="num">{{mynews}}</p>动态
               </router-link>
             </div>
-            <div class="block">
+            <div class="block" v-if="role==2">
               <router-link to="/comments">
                 <p class="num">{{comments}}</p>评价
               </router-link>
@@ -40,8 +40,8 @@
           </div>
           <!-- 钱包等功能入口 ,判断用户身份来展示入口-->
           <div class="list">
-            <div class="column" v-if="!student">
-              <router-link to="/course" >
+            <div class="column" v-if="role==2">
+              <router-link to="/course">
                 我的课程
                 <i class="cubeic-arrow"/>
               </router-link>
@@ -52,21 +52,26 @@
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column" v-if="student">
+            <div class="column" v-if="role==1">
               <router-link to="/">
                 我的教练
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-    
-            <div class="column">
+            <div class="column" v-if="role==1">
+              <router-link to="/userorder">
+                我的订单
+                <i class="cubeic-arrow"/>
+              </router-link>
+            </div>
+            <div class="column" v-if="role==2">
               <router-link to="/coachorder">
                 我的订单
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column">
-              <router-link to="/myvenue">
+            <div class="column" v-if="role==2">
+              <router-link to="{path:'/myvenue', query:{venue:venue}}">
                 我的场馆
                 <i class="cubeic-arrow"/>
               </router-link>
@@ -93,19 +98,62 @@ export default {
   },
   data() {
     return {
-      follow:0,
-      follower:0,
-      mynews:0,
-      comments:0,
+      follow: 0,
+      follower: 0,
+      mynews: 0,
+      comments: 0,
       clientHeight: "",
-      student: false,
-      data:{
-        realName:'',
+      role: "",
+      nickName: "",
+      userLevel: "",
+      userImg: "",
+      venue:{
+        venueId:'',
+        venueName:''
       }
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
+    this.role = sessionStorage.getItem("roleId");
+    let userId = sessionStorage.getItem("userId");
+
+    this.nickName = sessionStorage.getItem("nickName");
+    this.userLevel = sessionStorage.getItem("userLevel");
+    if (this.role === "1") {
+      this.$post("/api/user/getStudentInfo", userId).then(res => {
+        if (res.code === 1) {
+          console.log(res.data);
+          this.follow = res.data.focus;
+          this.follower = res.data.fans;
+          this.mynews = res.data.info;
+          this.venue.venueId = res.data.venueId;
+          this.venue.venueName =res.data.venueName;
+        } else {
+            this.$createToast({
+                type: "warn",
+                time: 1000,
+                txt: res.message
+              }).show();
+        }
+      });
+    }
+    if (this.role === "2") {
+      this.$post("/api/user/getDetailInfoByUserId", userId).then(res => {
+        if (res.code === 1) {
+          console.log(res.data);
+          this.follow = res.data.focus;
+          this.follower = res.data.fans;
+          this.mynews = res.data.info;
+        } else {
+            this.$createToast({
+                type: "warn",
+                time: 1000,
+                txt: res.message
+              }).show();
+        }
+      });
+    }
     // this.$fetch('/api/')
   },
   methods: {

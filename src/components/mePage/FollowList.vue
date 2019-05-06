@@ -46,7 +46,8 @@ export default {
       clearable: {},
       role: "",
       title: "我的关注",
-      list: []
+      list: [],
+      userId:''
     };
   },
   computed: {
@@ -59,7 +60,12 @@ export default {
     }
   },
   mounted() {
-    this.$post("/api/follow/showFollowList", 1).then(res => {
+      this.userId = sessionStorage.getItem("userId");
+      let user = {
+        state: 1,
+        userId: this.userId
+      };
+    this.$post("/api/follow/showFollowList",user).then(res => {
       if (res.code === 1) {
         this.list = res.data;
       }

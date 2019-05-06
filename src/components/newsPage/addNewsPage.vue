@@ -55,39 +55,38 @@ export default {
               required: true
             }
           },
-          {
+            {
             type: "upload",
             modelKey: "uploadValue",
+            label: "图片",
+            props: {
+              action: {
+                target: "/api/userApp/uploadHead",
+                fileName: "file",
+                data: {
+                  // token: 'token'
+                },
+                checkSuccess: (res, file) => {
+                  if (res.code === 0) {
+                    this.imgurl = res.data;
+                    console.log("res", this.imgurl);
 
-            // label: "Upload",
+                    return true;
+                  }
+                  return true;
+                }
+              },
+              max: 1
+            },
             events: {
               "file-removed": (...args) => {
                 console.log("file removed", args);
-              }
-            },
-            rules: {
-              // required: true,
-              uploaded: (val, config) => {
-                return Promise.all(
-                  val.map((file, i) => {
-                    return new Promise((resolve, reject) => {
-                      if (file.uploadedUrl) {
-                        return resolve();
-                      }
-                      //   fake request
-                      setTimeout(() => {
-                        if (i % 2) {
-                          reject(new Error());
-                        } else {
-                          file.uploadedUrl = "uploaded/url";
-                          resolve();
-                        }
-                      }, 1000);
-                    });
-                  })
-                ).then(() => {
-                  return true;
-                });
+              },
+              "files-added": (...args) => {
+                console.log("add", args);
+              },
+              "file-submitted": file => {
+                console.log("file-submitted-file", file);
               }
             },
             messages: {

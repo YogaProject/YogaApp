@@ -13,7 +13,7 @@
             @pulling-up="onPullingUp"
           >
             <ul v-for="item in venues" :key="item.id">
-              <li  @click="handleClick(item.id)">
+              <li @click="handleClick(item.id)">
                 <div class="bkimage" :style="{backgroundImage: 'url(' + (item.img || '') + ')'}"></div>
                 <div class="content">
                   <span>{{ item.name }}</span>
@@ -40,27 +40,31 @@ export default {
   },
   data() {
     return {
+      userId: "",
       options: {
         pullDownRefresh: this.pullDownRefreshObj,
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
-      venues: [
-        {
-          id: "1",
-          name: "梅溪湖",
-          content:
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          location: "湖南长沙",
-          img: ""
-        }
-      ]
+      venues: {
+        id: "1",
+        name: "梅溪湖",
+        content:
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        location: "湖南长沙",
+        img: ""
+      }
     };
   },
-  mounted(){},
+  mounted() {
+    this.venues = this.$route.query.venue;
+    console.log(venues);
+    this.userId = sessionStorage.getItem("userId");
+    this.$post("/api/");
+  },
   methods: {
-    handleClick(id){
-      this.$router.push({path:`/venuedetail/${id}`})
+    handleClick(id) {
+      this.$router.push({ path: `/venuedetail/${id}` });
     },
     onPullingDown() {
       // 模拟更新数据

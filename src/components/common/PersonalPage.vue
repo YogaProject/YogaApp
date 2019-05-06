@@ -6,40 +6,42 @@
       <div slot="content">
         <div class="view-wrapper">
           <!-- 头像、昵称、vip -->
-          <div class="meBox">
+          <div class="box">
+            <div class='meBox'>
             <div class="avatar"></div>
             <span class="name">{{user.realName}}</span>
             <i class="cubeic-vip">vip{{user.level}}</i>
-            <p>{{user.detail}}</p>
+            </div>
+            <p>个人简介：{{user.detail}}</p>
           </div>
 
           <!-- 关注、粉丝、动态、交易入口 -->
           <div class="entrance">
             <div class="block">
               <router-link to="/follow">
-                <p class="num">30</p>关注
+                <p class="num">{{user.focus}}</p>关注
               </router-link>
             </div>
             <div class="block">
               <router-link to="/follower">
-                <p class="num">30</p>粉丝
+                <p class="num">{{user.fans}}</p>粉丝
               </router-link>
             </div>
             <div class="block">
               <router-link to="/comments">
-                <p class="num">30</p>评价
+                <p class="num">{{user.comments}}</p>评价
               </router-link>
             </div>
           </div>
 
-          <div class="info" v-if="perm==='ok'">
+          <div class="info" v-if="user.privacy===1">
             <p class="title">联系方式</p>
             <p>手机号：{{user.phone}}</p>
             <p>QQ：{{user.qq}}</p>
             <P>微信：{{user.wechat}}</P>
           </div>
         </div>
-        <cube-button @click="goSignCoach()" class="btn">约私教</cube-button>
+        <cube-button @click="goSignCoach()" class="btn" v-if="roleId==1">约私教</cube-button>
       </div>
     </cube-page>
   </div>
@@ -57,27 +59,31 @@ export default {
       perm: "ok",
       clientHeight: "",
       student: false,
-      userId:'',
+      userId: "",
+      roleId: "",
       user: {
+        
         id: "",
         phone: "",
         qq: "",
         wechat: ""
-      }
+      },
+
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
     this.userId = this.$route.params.id;
-    this.$post('/api/user/getDetailInfoByUserId', this.userId).then(res=>{
+    this.roleId = sessionStorage.getItem("roleId");
+    let meId = sessionStorage.getItem("userId");
+    this.$post("/api/user/getDetailInfoByUserId", this.userId).then(res => {
       console.log(res.data);
       this.user = res.data;
-    })
-    
+    });
   },
   methods: {
     goSignCoach() {
-      this.$router.push({path:`/signcoach/${this.userId}`})
+      this.$router.push({ path: `/signcoach/${this.userId}` });
     }
   }
 };
@@ -100,18 +106,29 @@ export default {
   padding-right: 3px;
   background-color: yellow;
 }
-.meBox {
-  height: 100px;
+.box{
+  min-height: 120px;
   font-size: 20px;
   font-weight: 600;
+    background-color: white;
+
+}
+.meBox {
+
   display: flex;
   flex-direction: row;
   justify-items: center;
   padding-left: 30px;
   align-items: center;
-  background-color: white;
 }
 
+.box p {
+  font-size:16px;
+  text-align: left;
+  padding: 20px 40px;
+      background-color: white;
+
+}
 .avatar {
   border-radius: 50%;
   margin: 6px 20px 6px 6px;

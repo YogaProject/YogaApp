@@ -15,7 +15,8 @@
             <ul v-for="log in logs" :key="log.id">
               <li>
                 <span class="left">
-                  <i class="type">{{log.type}}</i>
+                  <i class="type" v-if="log.recordType===1">充值</i>
+                  <i class="type" v-if="log.recordType===2">提现</i>
                   <i class="time">{{log.time}}</i>
                 </span>
                 <span class="right">￥{{log.money}}</span>
@@ -57,6 +58,20 @@ export default {
         }
       ]
     };
+  },
+  mounted() {
+    let userId = sessionStorage.getItem("userId");
+    this.$post("/api/wallet/selectorder", userId).then(res => {
+      if (res.code === 1) {
+        this.logs = res.data;
+      } else {
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "txt"
+        });
+        toast.show();
+      }
+    });
   },
   methods: {
     onPullingDown() {

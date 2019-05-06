@@ -76,10 +76,33 @@ export default {
       e.preventDefault();
       console.log(model);
       // 邮箱登陆
-      this.$post("/api/userApp/loginByEmailAndPwd", {
-        user: model
-      }).then(res => {
-        console.log(res);
+      this.$post("/api/userApp/loginByEmailAndPwd", model).then(res => {
+        if (res.code === 1) {
+          // 注册成功，获取身份信息，将身份信息存到store里,封装？
+          let user = res.data;
+          sessionStorage.setItem("userId", user.userId);
+          sessionStorage.setItem("roleId", user.roleId);
+          sessionStorage.setItem("nickName", user.userNickname);
+          sessionStorage.setItem("userLevel", user.userLevel);
+          sessionStorage.setItem("userimg", user.userHeadImg);
+          console.log("userId" + sessionStorage.getItem("userId"));
+
+          console.log("roleId" + sessionStorage.getItem("roleId"));
+          // 将用户名和token放入vuex
+          this.$store.dispatch("setUser", res.data);
+          const toast = this.$createToast({
+            txt: res.message,
+            type: "correct"
+          });
+          toast.show();
+          this.$router.push({ path: "/main/newspage" });
+        } else {
+          this.toast = this.$createToast({
+            txt: res.message,
+            type: "txt"
+          });
+          this.toast.show();
+        }
       });
     },
     goRegister() {

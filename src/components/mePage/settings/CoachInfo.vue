@@ -34,15 +34,16 @@ export default {
         scrollToInvalidField: true,
         layout: "standard" // classic fresh
       },
+      imgurl: "",
       model: {
-        imgurl: "",
         UserEmail: "",
-        UserPhone: "",
         UserIdcard: "",
         UserRealname: "",
         UserGender: "",
         UserNickname: "",
-        uploadValue: []
+        coachStyle: "",
+        uploadValue: [],
+        content: ""
       },
       schema: {
         fields: [
@@ -50,34 +51,34 @@ export default {
             type: "upload",
             modelKey: "uploadValue",
             label: "头像",
+            props: {
+              action: {
+                target: "/api/upload/newFile",
+                fileName: "file",
+                data: {
+                  // token: 'token'
+                },
+                checkSuccess: (res, file) => {
+                  if (res.code === 1) {
+                    this.imgurl = res.data;
+                    console.log("res", this.imgurl);
+
+                    return true;
+                  }
+                  return true;
+                }
+              },
+              max: 1
+            },
             events: {
               "file-removed": (...args) => {
                 console.log("file removed", args);
-              }
-            },
-            rules: {
-              required: true,
-              uploaded: (val, config) => {
-                return Promise.all(
-                  val.map((file, i) => {
-                    return new Promise((resolve, reject) => {
-                      if (file.uploadedUrl) {
-                        return resolve();
-                      }
-                      //   fake request
-                      setTimeout(() => {
-                        if (i % 2) {
-                          reject(new Error());
-                        } else {
-                          file.uploadedUrl = "uploaded/url";
-                          resolve();
-                        }
-                      }, 1000);
-                    });
-                  })
-                ).then(() => {
-                  return true;
-                });
+              },
+              "files-added": (...args) => {
+                console.log("add", args);
+              },
+              "file-submitted": file => {
+                console.log("file-submitted-file", file);
               }
             },
             messages: {
@@ -112,7 +113,28 @@ export default {
             // validating when blur
             trigger: "blur"
           },
-         
+          {
+            type: "input",
+            modelKey: "UserQq",
+            label: "QQ",
+            props: {
+              placeholder: "请输入",
+              type: "number"
+            },
+            // validating when blur
+            trigger: "blur"
+          },
+          {
+            type: "input",
+            modelKey: "wechat",
+            label: "微信",
+            props: {
+              placeholder: "请输入"
+            },
+
+            // validating when blur
+            trigger: "blur"
+          },
           {
             type: "input",
             modelKey: "UserIdcard",
@@ -148,6 +170,28 @@ export default {
           },
           {
             type: "radio-group",
+            modelKey: "coachStyle",
+            label: "流派",
+            props: {
+              horizontal:true,
+              options: [
+                {
+                  label: "流瑜伽",
+                  value: 1
+                },
+                {
+                  label: "力量瑜伽",
+                  value: 2
+                },
+                {
+                  label: "空中瑜伽",
+                  value: 3,
+                }
+              ]
+            }
+          },
+          {
+            type: "radio-group",
             modelKey: "UserGender",
             label: "性别",
             rules: {
@@ -157,7 +201,15 @@ export default {
               options: ["男", "女"]
             }
           },
-
+          {
+            type: "textarea",
+            modelKey: "content",
+            placeholder: "输入内容...",
+            // debounce:100,
+            props: {
+              maxlength: 60
+            }
+          },
           {
             type: "submit",
             label: "确定添加"

@@ -11,7 +11,7 @@
             @pulling-down="onPullingDown"
             @pulling-up="onPullingUp"
           >
-           <!-- 搜索框 -->
+            <!-- 搜索框 -->
             <cube-input v-model="search" :clearable="clearable" placeholder="搜索">
               <i slot="append" class="cubeic-search"></i>
             </cube-input>
@@ -23,7 +23,9 @@
                   <i class="cubeic-vip">vip{{item.userLevel}}</i>
                 </span>
                 <span class="is follow" v-if="item.followStatus===1">互相关注</span>
-                <span class="not follow" v-if="item.followStatus!=1" @click="follow(item.userId)"><i class="cubeic-add"></i>关注</span>
+                <span class="not follow" v-if="item.followStatus!=1" @click="follow(item.userId)">
+                  <i class="cubeic-add"></i>关注
+                </span>
               </li>
             </ul>
           </cube-scroll>
@@ -42,12 +44,12 @@ export default {
   },
   data() {
     return {
-      clearable:{},
-      search:'',
-      role:'',
+      clearable: {},
+      search: "",
+      role: "",
       title: "我的粉丝",
-      list: [
-      ]
+      list: [],
+      userId: 0
     };
   },
   computed: {
@@ -59,26 +61,34 @@ export default {
       };
     }
   },
-  mounted(){
- this.getList();
+  mounted() {
+    this.userId = sessionStorage.getItem("userId");
+    this.getList();
   },
   methods: {
-    getList(){   this.$post('/api/follow/showFollowList',0).then(res=>{
-      if(res.code===1){
-      this.list = res.data;
-      }
-    })},
-      follow(userId){
-        //   关注此人
-        this.$post('/api/follow/addFollow',userId).then(res=>{
-          const toast = this.$createToast({
+    getList() {
+      let user = {
+        state: 0,
+        userId: this.userId
+      };
+      this.$post("/api/follow/showFollowList", user).then(res => {
+        // getList(){   this.$post('/api/user/getAllMyFans',0).then(res=>{
+        if (res.code === 1) {
+          this.list = res.data;
+        }
+      });
+    },
+    follow(userId) {
+      //   关注此人
+      this.$post("/api/follow/addFollow", userId).then(res => {
+        const toast = this.$createToast({
           txt: res.message,
           type: "correct"
         });
         toast.show();
         this.getList();
-        })
-      },
+      });
+    },
     onPullingDown() {
       // 模拟更新数据
       setTimeout(() => {
@@ -137,7 +147,7 @@ export default {
   flex-direction: row;
   justify-items: center;
   align-items: center;
-  margin:0 5px;
+  margin: 0 5px;
 }
 .cubeic-vip {
   font-size: 12px;
@@ -161,8 +171,7 @@ export default {
   right: 15px;
 }
 
-.not{
-    background-color: #ffeaa7;
-
+.not {
+  background-color: #ffeaa7;
 }
 </style>
