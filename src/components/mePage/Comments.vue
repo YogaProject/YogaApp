@@ -79,32 +79,6 @@ export default {
           rate: 3,
           userLevel:'vip2'
         },
-         {
-          id: "2",
-          name: "马佳",
-          time: "2019-2-2",
-          coursetype: "声乐",
-          content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          rate: 3,
-          userLevel:'vip2'
-        }, {
-          id: "3",
-          name: "马佳",
-          time: "2019-2-2",
-          coursetype: "声乐",
-          content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          rate: 3,
-          userLevel:'vip2'
-        },
-         {
-          id: "4",
-          name: "马佳",
-          time: "2019-2-2",
-          coursetype: "声乐",
-          content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          rate: 3,
-          userLevel:'vip2'
-        }
       ]
     };
   },

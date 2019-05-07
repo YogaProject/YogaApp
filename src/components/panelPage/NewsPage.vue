@@ -31,7 +31,7 @@
                 <div class="bubble">
                   <div class="info">
                     <!-- 头像 -->
-                    <div class="avatar" :style="{backgroundImage: 'url(' + (data.img || '') + ')'}"></div>
+                    <div class="avatar"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.userHeadimg|| '') + ')'}"></div>
                     <!-- 用户名 -->
                     <span class="name">
                       {{data.userNickName}}
@@ -44,7 +44,7 @@
                     <span class="time">{{data.publishTime}}</span>
                   </div>
                   <!-- 背景图片 -->
-                  <div class="bkimage" :style="{backgroundImage: 'url(' + (data.img || '') + ')'}"></div>
+                  <div class="bkimage" :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.img || '') + ')'}"></div>
                   <div class="content">
                     <span>{{ data.title }}</span>
                     <span class="location">
@@ -87,6 +87,8 @@ export default {
       size: 50,
       infinite: true,
       address: { longitude: 104.0, latitude: 30.582, roleId: 0 },
+      data:{
+      },
       tabs: [
         {
           label: "all",
@@ -231,7 +233,7 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-
+      width:340px;
       // background-color #eeeeee
       .name {
         font-size: 16px;
@@ -248,7 +250,8 @@ export default {
       }
 
       .time {
-        margin-left: 80px;
+        margin-left: 60px;
+        font-size:12px;
       }
 
       .avatar {
@@ -268,6 +271,7 @@ export default {
       width: 330px;
       height: 120px;
       background-color: #aaa;
+      background-size:cover;
     }
 
     p {
@@ -313,6 +317,13 @@ export default {
         flex-direction: row;
         justify-content: space-between;
         flex-wrap: nowrap;
+        height:20px;
+        width:95%;
+        margin:0;
+        background-color:rgba(250,250,250,0.8);
+        font-size:16px;
+        font-weight:700;
+        line-height:20px;
       }
     }
 

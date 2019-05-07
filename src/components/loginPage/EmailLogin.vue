@@ -86,9 +86,8 @@ export default {
           sessionStorage.setItem("userLevel", user.userLevel);
           sessionStorage.setItem("userimg", user.userHeadImg);
           console.log("userId" + sessionStorage.getItem("userId"));
-
           console.log("roleId" + sessionStorage.getItem("roleId"));
-          // 将用户名和token放入vuex
+          // 将用户放入vuex
           this.$store.dispatch("setUser", res.data);
           const toast = this.$createToast({
             txt: res.message,

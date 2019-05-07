@@ -63,7 +63,7 @@ export default {
     return {
       data: {
         role: "",
-        remain: "30"
+        remain: "0"
       }
     };
   },

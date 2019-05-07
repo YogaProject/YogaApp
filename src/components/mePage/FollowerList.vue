@@ -63,13 +63,21 @@ export default {
   },
   mounted() {
     this.userId = sessionStorage.getItem("userId");
+
     this.getList();
   },
   methods: {
     getList() {
+      let id = "";
+      if (this.$route.params.id == undefined) {
+        id = sessionStorage.getItem("userId");
+      } else {
+        id = this.$route.params.id;
+      }
+
       let user = {
         state: 0,
-        userId: this.userId
+        userId: id
       };
       this.$post("/api/follow/showFollowList", user).then(res => {
         // getList(){   this.$post('/api/user/getAllMyFans',0).then(res=>{

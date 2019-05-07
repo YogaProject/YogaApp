@@ -103,7 +103,7 @@ export default {
           sessionStorage.setItem("userId", user.userId);
           sessionStorage.setItem("roleId", user.roleId);
           sessionStorage.setItem("nickName", user.userNickname);
-          sessionStorage.setItem("userLevel", user.userLevel);
+          sessionStorage.setItem("userLevel", user.level);
           sessionStorage.setItem("userimg", user.userHeadImg);
 
           console.log("roleId" + sessionStorage.getItem("roleId"));

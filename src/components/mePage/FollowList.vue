@@ -17,7 +17,7 @@
             </cube-input>
             <ul v-for="item in list" :key="item.followId">
               <li class="column">
-                <div class="avatar" @click="goPage"></div>
+                <div class="avatar" @click="goPage" ></div>
                 <span>
                   {{item.userNickName}}
                   <i class="cubeic-vip">vip{{item.userLevel}}</i>
@@ -42,12 +42,12 @@ export default {
   },
   data() {
     return {
-      searchValue:'',
+      searchValue: "",
       clearable: {},
       role: "",
       title: "我的关注",
       list: [],
-      userId:''
+      userId: ""
     };
   },
   computed: {
@@ -60,12 +60,18 @@ export default {
     }
   },
   mounted() {
-      this.userId = sessionStorage.getItem("userId");
-      let user = {
-        state: 1,
-        userId: this.userId
-      };
-    this.$post("/api/follow/showFollowList",user).then(res => {
+    let id = "";
+    if (this.$route.params.id == undefined) {
+      id = sessionStorage.getItem("userId");
+    } else {
+      id = this.$route.params.id;
+    }
+
+    let user = {
+      state: 1,
+      userId: id
+    };
+    this.$post("/api/follow/showFollowList", user).then(res => {
       if (res.code === 1) {
         this.list = res.data;
       }
@@ -73,19 +79,18 @@ export default {
   },
 
   methods: {
-    search(searchValue){
-      this.$post('api/follow/searchFollow',searchValue).then(res=>{
-         if (res.code === 1) {
-        this.list = res.data;
-      }
-      else{
-         const toast = this.$createToast({
-          txt: res.message,
-          type: "correct"
-        });
-        toast.show();
-      }
-      })
+    search(searchValue) {
+      this.$post("api/follow/searchFollow", searchValue).then(res => {
+        if (res.code === 1) {
+          this.list = res.data;
+        } else {
+          const toast = this.$createToast({
+            txt: res.message,
+            type: "correct"
+          });
+          toast.show();
+        }
+      });
     },
     goPage() {
       //   跳转个人页面

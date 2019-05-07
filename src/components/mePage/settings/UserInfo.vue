@@ -165,8 +165,14 @@ export default {
         userNickname: model.UserNickname
       };
       this.$post("/api/userApp/updateStudentInfo", user).then(res => {
-        if (res.code === 1) {
-          console.log(res.message);
+        
+           this.$createToast({
+                type: "warn",
+                time: 1000,
+                txt: res.message
+              }).show();
+              if (res.code === 1) {
+                this.$router.push('/main/mePage');
         }
       });
     },

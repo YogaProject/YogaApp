@@ -61,7 +61,8 @@ export default {
     };
   },
   mounted(){
-     this.$post('api/course/listCourseByCoachId',4).then(res=>{
+    let id = sessionStorage.getItem('userId');
+     this.$post('api/course/listCourseByCoachId',id).then(res=>{
           if(res.code===1){
             this.courses = res.data;
           }

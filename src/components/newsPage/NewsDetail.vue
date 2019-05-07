@@ -6,12 +6,12 @@
       <div slot="content">
         <div class="view-wrapper">
           <cube-sticky :pos="scrollY">
-            <cube-scroll :scroll-events="scrollEvents" @scroll="scrollHandler">
+            <cube-scroll :scroll-events="scrollEvents" @scroll="scrollHandler" :style="{height:clientHeight-50+'px'}">
               <!-- 动态展示部分div -->
               <div class="news">
                 <header class="info">
                   <!-- 头像 -->
-                  <div class="avatar" @click="goPage"></div>
+                  <div class="avatar" @click="goPage(content.userId)"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+content.userHeadimg|| '') + ')'}"></div>
                   <!-- 用户昵称 -->
                   <span class="name">{{content.userNickName}}</span>
                   <!-- vip -->
@@ -19,7 +19,7 @@
                   <!-- 日期+时间 -->
                   <span class="date">{{content.publishTime}}</span>
                 </header>
-                <div class="picture" @click="showImagePreview">
+                <div class="picture" @click="showImagePreview"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+content.img|| '') + ')'}">
                   <!-- 图片展示 -->
                   <p class="title">{{content.title}}</p>
                 </div>
@@ -37,17 +37,15 @@
                   <li class="ele">
                     评论 {{content.commentCount}} 
                     <!-- <i class="cubeic-good"></i> -->
-
-                    <i class="cubeic-message" @click="addcomment">发评论</i>
+                    <i class="cubeic-message" @click="addcomment(content.mid)">发评论</i>
                   </li>
                 </ul>
               </cube-sticky-ele>
               <!-- ul替换评论卡片div -->
-
               <div class="comments" v-for="item in comment" :key="item.commentId">
                 <!-- 评论者头像 -->
                 <header class="info">
-                  <div class="avatar" @click="goPage"></div>
+                  <div class="avatar" @click="goPage(item.userId)"></div>
                   <!-- 评论者昵称 -->
                   <span class="name">
                     {{item.userNickName}}
@@ -73,7 +71,6 @@
               </div>
             </cube-scroll>
           </cube-sticky>
-          <!-- v-for渲染列表 mounted的时候请求数据-->
         </div>
       </div>
     </cube-page>
@@ -81,8 +78,6 @@
 </template>
 <script>
 import CubePage from "@/components/common/cube-page.vue";
-
-
 export default {
   name: "newsDetail",
   components: {
@@ -93,13 +88,14 @@ export default {
       scrollEvents: ["scroll"],
       scrollY: 0,
       showInner: true,
-      content: {
-       
-      },
+      content: {},
       comment:[],
+      clientHeight:"",
     };
   },
   mounted() {
+        this.clientHeight = `${document.documentElement.clientHeight}`;
+
     let mid = this.$route.params.id;
     console.log(mid);
     this.$post("/api/homepage/showHomepageDetail", mid).then(res => {
@@ -113,10 +109,10 @@ export default {
     });
   },
   methods: {
-    //！！ 获取数据时判断有没有children，若有showInner为真
     // 判断children超过两条则显示
-    goPage() {
+    goPage(id) {
       // 点击跳转该用户主页 获取该用户id
+      this.$router.push(`/personalpage/${id}`)
     },
     showImagePreview() {
       this.$createImagePreview({
@@ -126,9 +122,9 @@ export default {
     scrollHandler({ y }) {
       this.scrollY = -y;
     },
-    addcomment() {
+    addcomment(id ) {
       // ！！传入动态id 回复的评论id
-      this.$router.push("/comment");
+      this.$router.push(`/comment/${id}`);
     }
   }
 };
@@ -197,6 +193,7 @@ export default {
   background-color: #aaa;
   position: relative;
   margin-bottom: 30px;
+  background-size:cover;
 }
 
 .cubeic-vip {

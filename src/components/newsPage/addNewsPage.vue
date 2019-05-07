@@ -58,16 +58,16 @@ export default {
             {
             type: "upload",
             modelKey: "uploadValue",
-            label: "图片",
+            label: "头像",
             props: {
               action: {
-                target: "/api/userApp/uploadHead",
+                target: "/api/upload/newFile",
                 fileName: "file",
                 data: {
                   // token: 'token'
                 },
                 checkSuccess: (res, file) => {
-                  if (res.code === 0) {
+                  if (res.code === 1) {
                     this.imgurl = res.data;
                     console.log("res", this.imgurl);
 

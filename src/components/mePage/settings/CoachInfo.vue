@@ -1,7 +1,7 @@
 <template>
   <div>
     <cube-page title="信息完善(教练)" showBack="true">
-      <span slot="rightbtn" @click="submitHandler" class="rightbtn">提交</span>
+      <span slot="rightbtn" class="rightbtn">提交</span>
 
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
@@ -12,6 +12,7 @@
             :immediate-validate="false"
             :options="options"
             @validate="validateHandler"
+            @submit="submitHandler"
           ></cube-form>
         </div>
       </div>
@@ -42,6 +43,8 @@ export default {
         UserGender: "",
         UserNickname: "",
         coachStyle: "",
+        UserQq: "",
+        wechat: "",
         uploadValue: [],
         content: ""
       },
@@ -173,7 +176,7 @@ export default {
             modelKey: "coachStyle",
             label: "流派",
             props: {
-              horizontal:true,
+              horizontal: true,
               options: [
                 {
                   label: "流瑜伽",
@@ -185,7 +188,7 @@ export default {
                 },
                 {
                   label: "空中瑜伽",
-                  value: 3,
+                  value: 3
                 }
               ]
             }
@@ -198,6 +201,7 @@ export default {
               required: true
             },
             props: {
+              horizontal: true,
               options: ["男", "女"]
             }
           },
@@ -219,9 +223,29 @@ export default {
     };
   },
   methods: {
-    submitHandler(e) {
+    submitHandler(e, model) {
       e.preventDefault();
       console.log("submit", e);
+      let user = {
+        userHeadimg: this.imgurl,
+        idcard: model.UserIdcard,
+        realName: model.UserRealname,
+        sex: model.UserGender,
+        userNickname: model.UserNickname,
+        coachStyle: model.coachStyle,
+        coachDetail: model.content,
+        userQq: model.UserQq,
+        userWechat: model.wechat
+      };
+      this.$post("/api/userApp/updateCoachInfo", user).then(res => {
+        if (res.code === 1) {
+          this.$createToast({
+            type: "warn",
+            time: 1000,
+            txt: res.message
+          }).show();
+        }
+      });
     },
     validateHandler(result) {
       this.validity = result.validity;

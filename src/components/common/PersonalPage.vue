@@ -7,10 +7,11 @@
         <div class="view-wrapper">
           <!-- 头像、昵称、vip -->
           <div class="box">
-            <div class='meBox'>
-            <div class="avatar"></div>
-            <span class="name">{{user.realName}}</span>
-            <i class="cubeic-vip">vip{{user.level}}</i>
+            <div class="meBox">
+              <div class="avatar" :style="{backgroundImage: 'url(' + (avatar || '') + ')'}"></div>
+              <span class="name" v-if="roleId==1">{{user.userNickname}}</span>
+              <span class="name" v-if="roleId==2">{{user.realName}}</span>
+              <i class="cubeic-vip">vip{{user.level}}</i>
             </div>
             <p>个人简介：{{user.detail}}</p>
           </div>
@@ -27,14 +28,17 @@
                 <p class="num">{{user.fans}}</p>粉丝
               </router-link>
             </div>
-            <div class="block">
+            <div class="block" v-if="roleId==2">
               <router-link to="/comments">
                 <p class="num">{{user.comments}}</p>评价
               </router-link>
             </div>
+               <div class="block" @click="follow(user.userId)">
+                <p class="follow" >+加关注</p>
+            </div>
           </div>
 
-          <div class="info" v-if="user.privacy===1">
+          <div class="info" v-if="user.privacy==1">
             <p class="title">联系方式</p>
             <p>手机号：{{user.phone}}</p>
             <p>QQ：{{user.qq}}</p>
@@ -61,29 +65,49 @@ export default {
       student: false,
       userId: "",
       roleId: "",
+      avatar: "",
       user: {
-        
         id: "",
-        phone: "",
-        qq: "",
-        wechat: ""
-      },
-
+        phone: "13333445566",
+        qq: "3344555522",
+        wechat: "13333445566"
+      }
     };
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
     this.userId = this.$route.params.id;
+    console.log("!!!" + this.userId);
     this.roleId = sessionStorage.getItem("roleId");
     let meId = sessionStorage.getItem("userId");
-    this.$post("/api/user/getDetailInfoByUserId", this.userId).then(res => {
-      console.log(res.data);
-      this.user = res.data;
-    });
+    if (this.roleId === "1") {
+      this.$post("/api/user/getStudentInfo", this.userId).then(res => {
+        if (res.code === 1) {
+          this.user = res.data;
+          this.avatar = "http://47.111.104.78:8082" + res.data.userHeadimg;
+        }
+      });
+    } else {
+      this.$post("/api/user/getDetailInfoByUserId", this.userId).then(res => {
+        console.log(res.data);
+        this.user = res.data;
+        this.avatar = "http://47.111.104.78:8082" + res.data.headImg;
+      });
+    }
   },
   methods: {
     goSignCoach() {
       this.$router.push({ path: `/signcoach/${this.userId}` });
+    },
+    follow(userid){
+       this.$post("/api/follow/addFollow", userid).then(res => {
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "correct"
+        });
+        toast.show();
+        this.getList();
+      });
     }
   }
 };
@@ -106,15 +130,13 @@ export default {
   padding-right: 3px;
   background-color: yellow;
 }
-.box{
+.box {
   min-height: 120px;
   font-size: 20px;
   font-weight: 600;
-    background-color: white;
-
+  background-color: white;
 }
 .meBox {
-
   display: flex;
   flex-direction: row;
   justify-items: center;
@@ -123,11 +145,10 @@ export default {
 }
 
 .box p {
-  font-size:16px;
+  font-size: 16px;
   text-align: left;
   padding: 20px 40px;
-      background-color: white;
-
+  background-color: white;
 }
 .avatar {
   border-radius: 50%;
@@ -184,7 +205,10 @@ export default {
 .title {
   border-bottom: 1px solid #ccc;
 }
-
+.follow{
+  width: 100%;
+  /* background-color:  */
+}
 .btn {
   position: absolute;
   bottom: 0;

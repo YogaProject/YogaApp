@@ -36,7 +36,7 @@
                 class="window"
               >
                 <div class="left">
-                  <div class="avatar" @click="goDetail(item.userId)"></div>
+                  <div class="avatar" @click="goDetail(item.userId)"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.headImg|| '') + ')'}"></div>
                   <p class="name">{{item.realName}}</p>
                 </div>
                 <div class="right">
@@ -75,7 +75,8 @@ export default {
         scrollbar: true
       },
       show: true,
-      list: []
+      list: [],
+      userImg:""
     };
   },
   mounted() {
@@ -88,12 +89,10 @@ export default {
       console.log("data:" + res.data);
 
       if (res.code === 1) {
-        for (let i = 0; i < res.data.length; i++) {
-          let item = res.data[i];
-          item.show = false;
-          this.list.push(item);
-        }
-        console.log(this.list);
+        this.list = res.data;
+        this.userImg = "http://47.111.104.78:8082" + res.data.headImg;
+
+        console.log(this.userImg);
       }
     });
   },
@@ -187,9 +186,7 @@ export default {
 .cubeic-search {
   padding-right: 15px;
 }
-.cube-input {
-  /* width: 90%; */
-}
+
 </style>
 <style>
 </style>

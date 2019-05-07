@@ -74,6 +74,8 @@ export default {
   mounted() {
     this.role = sessionStorage.getItem("roleId");
     let id = this.$route.params.id;
+    let venue = this.$route.query.venue;
+    console.log(id)
     this.$post("/api/user/getVenueDetailInfoByUserId", id).then(res => {
       if (res.code === 1) {
         this.data = res.data;

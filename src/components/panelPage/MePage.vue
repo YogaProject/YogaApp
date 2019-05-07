@@ -11,8 +11,10 @@
           <!-- 头像、昵称、vip -->
           <div class="meBox">
             <div class="avatar" :style="{backgroundImage: 'url(' + (userImg|| '') + ')'}"></div>
-            <span class="name">{{nickName}}</span>
-            <i class="cubeic-vip">vip{{userLevel}}</i>
+            <span class="name" v-if="role==1">{{data.userNickname}}</span>
+            <span class="name" v-if="role==2">{{data.realName}}</span>
+
+            <i class="cubeic-vip">vip{{data.userLevel}}</i>
             <p></p>
           </div>
           <!-- 关注、粉丝、动态、交易入口 -->
@@ -53,7 +55,7 @@
               </router-link>
             </div>
             <div class="column" v-if="role==1">
-              <router-link to="/">
+              <router-link to="/mycoach">
                 我的教练
                 <i class="cubeic-arrow"/>
               </router-link>
@@ -71,17 +73,17 @@
               </router-link>
             </div>
             <div class="column" v-if="role==2">
-              <router-link to="{path:'/myvenue', query:{venue:venue}}">
+              <router-link to="{path:'/myvenue'}">
                 我的场馆
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column">
+            <!-- <div class="column">
               <router-link to="/">
                 *众筹*
                 <i class="cubeic-arrow"/>
               </router-link>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -107,10 +109,11 @@ export default {
       nickName: "",
       userLevel: "",
       userImg: "",
-      venue:{
-        venueId:'',
-        venueName:''
-      }
+      venue: {
+        venueId: "",
+        venueName: ""
+      },
+      data: {}
     };
   },
   mounted() {
@@ -128,13 +131,15 @@ export default {
           this.follower = res.data.fans;
           this.mynews = res.data.info;
           this.venue.venueId = res.data.venueId;
-          this.venue.venueName =res.data.venueName;
+          this.venue.venueName = res.data.venueName;
+          this.userImg = "http://47.111.104.78:8082" + res.data.userHeadimg;
+          this.data = res.data;
         } else {
-            this.$createToast({
-                type: "warn",
-                time: 1000,
-                txt: res.message
-              }).show();
+          this.$createToast({
+            type: "warn",
+            time: 1000,
+            txt: res.message
+          }).show();
         }
       });
     }
@@ -146,11 +151,11 @@ export default {
           this.follower = res.data.fans;
           this.mynews = res.data.info;
         } else {
-            this.$createToast({
-                type: "warn",
-                time: 1000,
-                txt: res.message
-              }).show();
+          this.$createToast({
+            type: "warn",
+            time: 1000,
+            txt: res.message
+          }).show();
         }
       });
     }

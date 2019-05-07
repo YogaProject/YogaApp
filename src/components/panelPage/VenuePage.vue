@@ -31,7 +31,7 @@
                   class="window"
                 >
                   <div class="left">
-                    <div class="avatar" @click="goDetail(item.userId)"></div>
+                    <div class="avatar" @click="goDetail(item.userId)" :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.headImg || '') + ')'}"></div>
                     <p class="name">{{item.realName}}</p>
                     <p>{{item.clicks}}</p>
                   </div>

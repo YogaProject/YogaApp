@@ -1,14 +1,13 @@
 <template>
   <div>
     <!-- 评论发布页面  -->
-    <cube-page title="评论" showBack="true">
+    <cube-page title="评论" showBack>
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
           <cube-form
             :model="model"
             :schema="schema"
-            :immediate-validate="false"
             @submit="submitHandler"
           ></cube-form>
         </div>
@@ -26,24 +25,19 @@ export default {
   },
   data() {
     return {
-      validity: {},
-      valid: undefined,
+ 
       model: {
-        content: "",
+        content: ""
       },
       schema: {
         fields: [
-    
           {
             type: "textarea",
             modelKey: "content",
-            placeholder:'输入内容...',
+            placeholder: "输入内容...",
             // debounce:100,
             props: {
               maxlength: 280
-            },
-            rules: {
-              required: true
             }
           },
           {
@@ -54,9 +48,24 @@ export default {
       }
     };
   },
+  // mounted() {},
   methods: {
-    submitHandler(e,model) {
-      
+    submitHandler(e, model) {
+      console.log(e);
+      e.preventDefault();
+      let mid = this.$route.params.id;
+      let comment = {
+        entityType: 2,
+        commentDetail: model.content,
+        entityId: mid
+      }
+      this.$post("/api/comment/addComment",comment).then(res => {
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "txt"
+        });
+        toast.show();
+      });
     }
   }
 };

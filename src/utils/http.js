@@ -6,7 +6,7 @@ import axios from 'axios'
 * TIME_OUT、ERR_OK
 */
 export const TIME_OUT = 10000;    // 请求超时时间
-export const CODE = 0;      // 请求成功返回状态，字段和后台统一
+// export const CODE = 0;      // 请求成功返回状态，字段和后台统一
 
 // 请求超时时间
 axios.defaults.timeout = TIME_OUT
