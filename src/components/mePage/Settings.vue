@@ -57,14 +57,23 @@ export default {
       role: ""
     };
   },
-  mounted(){
-    this.role = sessionStorage.getItem('roleId');
-    console.log("role:"+this.role);
+  mounted() {
+    this.role = sessionStorage.getItem("roleId");
+    console.log("role:" + this.role);
   },
-  methods:{
-    logout(){
-      sessionStorage.setItem('currentUser','');
-      this.$router.push('/login');
+  methods: {
+    logout() {
+      sessionStorage.setItem("currentUser", "");
+      this.$post("/api/userApp/logout").then(res => {
+        this.$createToast({
+          type: "warn",
+          time: 1000,
+          txt: res.message
+        }).show();
+        if (code === 1) {
+          this.$router.push("/login");
+        }
+      });
     }
   }
 };

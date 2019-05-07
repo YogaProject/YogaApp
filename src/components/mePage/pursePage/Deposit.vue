@@ -7,6 +7,7 @@
         <div class="view-wrapper">
           <cube-checker v-model="checkerValue" :options="options" type="radio"/>
           <div class="alipay" @click="alipay">支付宝充值</div>
+          <div class="alipay" @click="bank">银联支付</div>
           <footer>
             <p>
               <i class="cubeic-warn"></i>充值不退款
@@ -60,17 +61,10 @@ export default {
     alipay() {
       // 第三方接口
       this.$post("/api/wallet/alipay", this.checkerValue).then(res => {
-        // let routerData = this.$router.resolve({
-        //   path: "/ finance / applyText",
-        //   query: { htmls: res}
-        // });
-        // this.htmls = res; //打开新页面
-
-        // window.open(routerData.href, "_ blank");
-        // const div = document.createElement("div");
-        // div.innerHTML = htmls;
-        // document.body.appendChild(div);
-        // document.forms[0].submit();
+        const div = document.createElement("div");
+        div.innerHTML = res;
+        document.body.appendChild(div);
+        document.forms[0].submit();
       });
     }
   }

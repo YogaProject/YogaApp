@@ -13,7 +13,6 @@
             <div class="avatar" :style="{backgroundImage: 'url(' + (userImg|| '') + ')'}"></div>
             <span class="name" v-if="role==1">{{data.userNickname}}</span>
             <span class="name" v-if="role==2">{{data.realName}}</span>
-
             <i class="cubeic-vip">vip{{data.userLevel}}</i>
             <p></p>
           </div>
@@ -21,22 +20,22 @@
           <div class="entrance">
             <div class="block">
               <router-link to="/follow">
-                <p class="num">{{follow}}</p>关注
+                <p class="num">{{data.focus}}</p>关注
               </router-link>
             </div>
             <div class="block">
               <router-link to="/follower">
-                <p class="num">{{follower}}</p>粉丝
+                <p class="num">{{data.fans}}</p>粉丝
               </router-link>
             </div>
             <div class="block">
               <router-link to="/mynews">
-                <p class="num">{{mynews}}</p>动态
+                <p class="num">{{data.info}}</p>动态
               </router-link>
             </div>
             <div class="block" v-if="role==2">
               <router-link to="/comments">
-                <p class="num">{{comments}}</p>评价
+                <p class="num">{{data.comments}}</p>评价
               </router-link>
             </div>
           </div>
@@ -83,7 +82,7 @@
                 *众筹*
                 <i class="cubeic-arrow"/>
               </router-link>
-            </div> -->
+            </div>-->
           </div>
         </div>
       </div>
@@ -120,19 +119,13 @@ export default {
     this.clientHeight = `${document.documentElement.clientHeight}`;
     this.role = sessionStorage.getItem("roleId");
     let userId = sessionStorage.getItem("userId");
-
-    this.nickName = sessionStorage.getItem("nickName");
-    this.userLevel = sessionStorage.getItem("userLevel");
     if (this.role === "1") {
       this.$post("/api/user/getStudentInfo", userId).then(res => {
         if (res.code === 1) {
           console.log(res.data);
-          this.follow = res.data.focus;
-          this.follower = res.data.fans;
-          this.mynews = res.data.info;
           this.venue.venueId = res.data.venueId;
           this.venue.venueName = res.data.venueName;
-          this.userImg = "http://47.111.104.78:8082" + res.data.userHeadimg;
+          this.userImg = "http://192.168.5.58:8082/" + res.data.userHeadimg;
           this.data = res.data;
         } else {
           this.$createToast({
@@ -147,9 +140,8 @@ export default {
       this.$post("/api/user/getDetailInfoByUserId", userId).then(res => {
         if (res.code === 1) {
           console.log(res.data);
-          this.follow = res.data.focus;
-          this.follower = res.data.fans;
-          this.mynews = res.data.info;
+          this.data = res.data;
+          this.userImg = "http://192.168.5.58:8082/" + res.data.userHeadimg;
         } else {
           this.$createToast({
             type: "warn",

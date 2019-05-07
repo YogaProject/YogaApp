@@ -30,8 +30,8 @@
               <div :id="data.userId" class="item" @click="handleClick(data.mid)">
                 <div class="bubble">
                   <div class="info">
-                    <!-- 头像 -->
-                    <div class="avatar"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.userHeadimg|| '') + ')'}"></div>
+                    <!-- 头像 'http://47.111.104.78:8082'-->
+                    <div class="avatar"  :style="{backgroundImage: 'url(' + (+data.userHeadimg|| '') + ')'}"></div>
                     <!-- 用户名 -->
                     <span class="name">
                       {{data.userNickName}}
@@ -44,7 +44,7 @@
                     <span class="time">{{data.publishTime}}</span>
                   </div>
                   <!-- 背景图片 -->
-                  <div class="bkimage" :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.img || '') + ')'}"></div>
+                  <div class="bkimage" :style="{backgroundImage: 'url(' + (+data.img || '') + ')'}"></div>
                   <div class="content">
                     <span>{{ data.title }}</span>
                     <span class="location">
@@ -87,8 +87,7 @@ export default {
       size: 50,
       infinite: true,
       address: { longitude: 104.0, latitude: 30.582, roleId: 0 },
-      data:{
-      },
+      data:{},
       tabs: [
         {
           label: "all",
@@ -110,6 +109,7 @@ export default {
     };
   },
   mounted() {
+    
     this.clientHeight = `${document.documentElement.clientHeight}`;
     var _this = this;
     if (navigator.geolocation) {
@@ -133,7 +133,6 @@ export default {
     }
     this.$post("/api/homepage/showHomepage", this.address).then(res => {
       console.log(res.data);
-
       _this.msg = res.data;
     });
   },

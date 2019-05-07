@@ -69,7 +69,7 @@ export default new Router({
     {
       path: '/comment/:id',
       name: 'comment',
-      component: () => import('./components/common/CommentPage.vue')
+      component: () => import('./components/newsPage/CommentPage.vue')
     },
     {
       path: '/follow',

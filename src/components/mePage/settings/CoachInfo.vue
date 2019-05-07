@@ -244,6 +244,7 @@ export default {
             time: 1000,
             txt: res.message
           }).show();
+          this.$router.push("/main/mePage");
         }
       });
     },

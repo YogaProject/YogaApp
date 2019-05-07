@@ -49,14 +49,7 @@ export default {
         scrollbar: true
       },
       courses: [
-        {
-          id: "1",
-          name: "力量瑜伽",
-          time: "1小时",
-          price: "120.0",
-          content:
-            "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
-        }
+  
       ]
     };
   },
@@ -65,6 +58,12 @@ export default {
      this.$post('api/course/listCourseByCoachId',id).then(res=>{
           if(res.code===1){
             this.courses = res.data;
+          }else{
+            const toast = this.$createToast({
+            txt: "Correct",
+            type: "correct"
+          });
+          toast.show();
           }
         })
   },

@@ -1,7 +1,6 @@
 <template>
   <div>
     <cube-page title="隐私" showBack="true">
-      <span slot="rightbtn" @submit="submitHandler" class='rightbtn'>提交</span>
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
@@ -11,6 +10,7 @@
             :immediate-validate="false"
             :options="options"
             @validate="validateHandler"
+            @submit="submitHandler"
           ></cube-form>
         </div>
       </div>
@@ -49,15 +49,26 @@ export default {
             props: {
               options: ["公开", "好友可见", "仅自己可见"]
             }
+          },
+          {
+            type:'submit',
+            label:'提交'
           }
         ]
       }
     };
   },
   methods: {
-    submitHandler(e) {
+    submitHandler(e,model) {
       e.preventDefault();
       console.log("submit", e);
+      this.$post('/api/userApp/updatePrivacy',model).then(res=>{
+        const toast = this.$createToast({
+            txt: res.message,
+            type: "correct"
+          });
+          toast.show();
+      })
     },
     validateHandler(result) {
       this.validity = result.validity;

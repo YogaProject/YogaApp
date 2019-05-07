@@ -104,6 +104,7 @@ export default {
       this.$post("/api/coach/updateOrderForNewOrder", order).then(res => {
         console.log(res.message);
         if (res.code === 1) {
+          
           this.getData();
         }
       });

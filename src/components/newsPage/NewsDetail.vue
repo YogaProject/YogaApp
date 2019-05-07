@@ -45,7 +45,7 @@
               <div class="comments" v-for="item in comment" :key="item.commentId">
                 <!-- 评论者头像 -->
                 <header class="info">
-                  <div class="avatar" @click="goPage(item.userId)"></div>
+                  <div class="avatar" @click="goPage(item.userId)" :style="{backgroundImage: 'url(' + (userImg|| '') + ')'}"></div>
                   <!-- 评论者昵称 -->
                   <span class="name">
                     {{item.userNickName}}
