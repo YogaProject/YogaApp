@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- cube-page  -->
-    <cube-page title="我的钱包" showBack="true">
+    <cube-page title="我的钱包" showBack>
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
@@ -24,7 +24,7 @@
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column" v-if="role===2">
+            <div class="column" v-if="data.role==='2'">
               <router-link to="/withdraw">
                 提现
                 <i class="cubeic-arrow"/>

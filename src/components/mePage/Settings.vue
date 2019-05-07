@@ -70,7 +70,7 @@ export default {
           time: 1000,
           txt: res.message
         }).show();
-        if (code === 1) {
+        if (res.code === 1) {
           this.$router.push("/login");
         }
       });

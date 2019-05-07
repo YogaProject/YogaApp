@@ -7,7 +7,7 @@
         <div class="view-wrapper">
           <cube-form
             :model="model"
-            :schema="schema"
+            :field="fields"
             @submit="submitHandler"
           ></cube-form>
         </div>
@@ -25,11 +25,9 @@ export default {
   },
   data() {
     return {
- 
       model: {
         content: ""
       },
-      schema: {
         fields: [
           {
             type: "textarea",
@@ -45,7 +43,7 @@ export default {
             label: "发布"
           }
         ]
-      }
+      
     };
   },
   // mounted() {},

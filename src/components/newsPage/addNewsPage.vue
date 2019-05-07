@@ -58,7 +58,7 @@ export default {
             {
             type: "upload",
             modelKey: "uploadValue",
-            label: "头像",
+            label: "",
             props: {
               action: {
                 target: "/api/upload/newFile",

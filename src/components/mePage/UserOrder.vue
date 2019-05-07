@@ -104,7 +104,7 @@ export default {
         }
       });
     },
-    refund(orderId){
+    refund(orderId) {
       // this.$post('/api/student/updateOrderForRefund')
     },
     pay(orderId) {
@@ -113,7 +113,7 @@ export default {
       this.$fetch("/api/user/listCouponsByUserId").then(res => {
         if (res.code === 1) {
           this.coupons = [];
-          this.coupons.push({value:0,text:'无'})
+          this.coupons.push({ value: 0, text: "无" });
           for (let i = 0; i < res.data.length; i++) {
             let item = {
               value: res.data[i].couponId,
@@ -155,13 +155,17 @@ export default {
       this.$post("/api/student/updateOrderWithCoupon", coupon).then(res => {
         if (res.code === 1) {
           const toast = this.$createToast({
-            txt: "Correct",
+            txt: res.message,
             type: "correct"
           });
           toast.show();
           this.$post("/api/student/updateOrderForPay", this.orderId).then(
             res => {
               if (res.code === 1) {
+                const toast = this.$createToast({
+                  txt: res.message,
+                  type: "correct"
+                });
                 console.log(res.message);
                 this.getData();
               }
@@ -179,7 +183,7 @@ export default {
       }).show();
     },
     goComment(id) {
-      this.$router.push({path:"/addcoursecomments",query:{id}});
+      this.$router.push({ path: "/addcoursecomments", query: { id } });
     },
     onPullingDown() {
       // 模拟更新数据

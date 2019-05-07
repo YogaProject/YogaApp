@@ -65,7 +65,6 @@
   </div>
 </template>
 <script>
-import Mock from "@/components/newsPage/message.js";
 import CubePage from "@/components/common/cube-page.vue";
 import AddBtn from "@/components/newsPage/addNewsBtn.vue";
 

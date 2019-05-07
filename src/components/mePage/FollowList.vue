@@ -17,13 +17,14 @@
             </cube-input>
             <ul v-for="item in list" :key="item.followId">
               <li class="column">
-                <div class="avatar" @click="goPage" ></div>
+                <div class="avatar" @click="goPage"></div>
                 <span>
                   {{item.userNickName}}
                   <i class="cubeic-vip">vip{{item.userLevel}}</i>
                 </span>
                 <span class="is follow" v-if="item.followStatus===1">互相关注</span>
                 <span class="not follow" v-if="item.followStatus===0">已关注</span>
+                <span class="cancel" @click="cancelFollow(item.userId)">取消关注</span>
               </li>
             </ul>
           </cube-scroll>
@@ -61,6 +62,7 @@ export default {
   },
   mounted() {
     let id = "";
+    console.log("this.$route.params.id" + this.$route.params.id);
     if (this.$route.params.id == undefined) {
       id = sessionStorage.getItem("userId");
     } else {
@@ -79,6 +81,15 @@ export default {
   },
 
   methods: {
+    cancelFollow(id){
+      this.$post('/api/follow/cancelFollow',id).then(res=>{
+         const toast = this.$createToast({
+            txt: res.message,
+            type: "txt"
+          });
+          toast.show();
+      })
+    },
     search(searchValue) {
       this.$post("api/follow/searchFollow", searchValue).then(res => {
         if (res.code === 1) {
@@ -174,5 +185,16 @@ export default {
   text-align: center;
   position: fixed;
   right: 15px;
+}
+.cancel{
+  height: 30px;
+  width: 60px;
+  border-radius: 16px;
+  background-color: #ddd;
+  font-size: 12px;
+  line-height: 30px;
+  text-align: center;
+  position: fixed;
+  right: 85px;
 }
 </style>

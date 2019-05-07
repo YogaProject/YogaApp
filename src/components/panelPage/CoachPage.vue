@@ -22,7 +22,7 @@
             <bm-marker
               v-for="item in list"
               :key="item.userId"
-              :position="{lng:item.longitude,lat:item.latitude}"
+              :position="position = {lng:item.longitude,lat:item.latitude}"
               :dragging="false"
               animation="BMAP_ANIMATION_BOUNCE"
               @click="WindowOpen(item)"
@@ -36,7 +36,11 @@
                 class="window"
               >
                 <div class="left">
-                  <div class="avatar" @click="goDetail(item.userId)"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.headImg|| '') + ')'}"></div>
+                  <div
+                    class="avatar"
+                    @click="goDetail(item.userId)"
+                    :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.headImg|| '') + ')'}"
+                  ></div>
                   <p class="name">{{item.realName}}</p>
                 </div>
                 <div class="right">
@@ -76,7 +80,7 @@ export default {
       },
       show: true,
       list: [],
-      userImg:""
+      userImg: ""
     };
   },
   mounted() {
@@ -186,7 +190,6 @@ export default {
 .cubeic-search {
   padding-right: 15px;
 }
-
 </style>
 <style>
 </style>

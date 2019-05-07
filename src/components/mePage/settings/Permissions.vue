@@ -35,19 +35,31 @@ export default {
       },
       model: {
         //   请求
-        value: "公开"
+        userPrivacy: "公开"
       },
       schema: {
         fields: [
           {
             type: "radio-group",
-            modelKey: "value",
+            modelKey: "userPrivacy",
             label: "信息权限",
             rules: {
               required: true
             },
             props: {
-              options: ["公开", "好友可见", "仅自己可见"]
+              options: [
+                {
+                  label: "公开",
+                  value: 2
+                },
+                {
+                  label: "好友可见",
+                  value: 1
+                },
+                {
+                  label: "仅自己可见",
+                  value: 0
+                } ]
             }
           },
           {
@@ -62,12 +74,16 @@ export default {
     submitHandler(e,model) {
       e.preventDefault();
       console.log("submit", e);
-      this.$post('/api/userApp/updatePrivacy',model).then(res=>{
+      let num = model.userPrivacy;
+      this.$post('/api/userApp/updatePrivacy',num).then(res=>{
         const toast = this.$createToast({
             txt: res.message,
             type: "correct"
           });
           toast.show();
+          if(res.code===1){
+            this.$router.push('/main/mePage');
+          }
       })
     },
     validateHandler(result) {

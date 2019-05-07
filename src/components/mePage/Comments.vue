@@ -5,31 +5,33 @@
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
-           <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
+          <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
             <cube-tab v-for="item in tabs" :label="item.label" :key="item.label">{{item.name}}</cube-tab>
           </cube-tab-bar>
-           <cube-scroll
+          <cube-scroll
             ref="scroll"
             :data="comments"
             :options="options"
             @pulling-down="onPullingDown"
             @pulling-up="onPullingUp"
           >
-          
-          <ul v-for="item in comments" :key="item.id">
-            <li>
-              <div class="info">
-                <span>{{item.name}}<i class="cubeic-vip">{{item.userLevel}}</i></span>
-                <span class="time">{{item.time}}</span>
-                <span class="type">{{item.coursetype}}</span>
-              </div>
-              <div class='content'>
-                <cube-rate v-model="item.rate" :disabled="true" :max="5" :justify="false"></cube-rate>
-                <p>{{item.content}}</p>
-              </div>
-            </li>
-          </ul>
-           </cube-scroll>
+            <ul v-for="item in comments" :key="item.id">
+              <li>
+                <div class="info">
+                  <span>
+                    {{item.name}}
+                    <i class="cubeic-vip">{{item.userLevel}}</i>
+                  </span>
+                  <span class="time">{{item.time}}</span>
+                  <span class="type">{{item.coursetype}}</span>
+                </div>
+                <div class="content">
+                  <cube-rate v-model="item.commentDegree" :disabled="true" :max="5" :justify="false"></cube-rate>
+                  <p>{{item.commentDetail}}</p>
+                </div>
+              </li>
+            </ul>
+          </cube-scroll>
         </div>
       </div>
     </cube-page>
@@ -45,27 +47,27 @@ export default {
   },
   data() {
     return {
-     options: {
+      options: {
         pullDownRefresh: this.pullDownRefreshObj,
         pullUpLoad: this.pullUpLoadObj,
         scrollbar: true
       },
-      selectedLabel:'all',
+      selectedLabel: "all",
       tabs: [
         {
-          label: 'all',
+          label: "all",
           name: "全部"
         },
         {
-          label: 'good',
+          label: "good",
           name: "好评"
         },
         {
-          label: 'middle',
+          label: "middle",
           name: "中评"
         },
         {
-          label: 'bad',
+          label: "bad",
           name: "差评"
         }
       ],
@@ -75,16 +77,31 @@ export default {
           name: "马佳",
           time: "2019-2-2",
           coursetype: "声乐",
-          content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          content:
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           rate: 3,
-          userLevel:'vip2'
-        },
+          userLevel: "vip2"
+        }
       ]
     };
   },
+  mounted() {
+    let userId = sessionStorage.getItem("userId");
+    this.$post("/api/user/getAllMyComments").then(res => {
+      if (res.code === 1) {
+        this.comments = res.data;
+      } else {
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "txt"
+        });
+        toast.show();
+      }
+    });
+  },
   methods: {
-    clickHandler(e){},
-        onPullingDown() {
+    clickHandler(e) {},
+    onPullingDown() {
       // 模拟更新数据
       setTimeout(() => {
         if (Math.random() > 0.5) {
@@ -119,33 +136,31 @@ export default {
   left: 0;
   bottom: 0;
   width: 100%;
-    background-color: #eee;
-
+  background-color: #eee;
 }
 
-li{
-  min-height:150px;
-  font-size:16px;
-  display:flex;
-  flex-direction:column;
-  margin:15px;
+li {
+  min-height: 150px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  margin: 15px;
   background-color: #fff;
   box-shadow: 0 0 5px #aaa;
 }
 
-.info{
-  height:60px;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    padding:10px 0 0 15px;
-    line-height:20px;
-
+.info {
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 10px 0 0 15px;
+  line-height: 20px;
 }
 #tab {
   font-size: 14px;
   height: 40px;
-  background-color:#fff;
+  background-color: #fff;
 }
 .cubeic-vip {
   font-size: 12px;
@@ -154,15 +169,15 @@ li{
   padding-right: 3px;
   background-color: yellow;
 }
-.time{
-    font-size: 14px;
-    color:#aaa;
+.time {
+  font-size: 14px;
+  color: #aaa;
 }
 
-.content{
-  text-align:left;
-  padding:5px;
-  line-height:20px;
+.content {
+  text-align: left;
+  padding: 5px;
+  line-height: 20px;
 }
 
 .content p {
@@ -170,8 +185,8 @@ li{
 }
 </style>
 <style>
-.cube-rate{
-  width:120px;
+.cube-rate {
+  width: 120px;
 }
 </style>
 

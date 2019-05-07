@@ -18,15 +18,11 @@
 
           <!-- 关注、粉丝、动态、交易入口 -->
           <div class="entrance">
-            <div class="block">
-              <router-link to="/follow">
+            <div class="block" @click="goFollow(user.userId)">
                 <p class="num">{{user.focus}}</p>关注
-              </router-link>
             </div>
-            <div class="block">
-              <router-link to="/follower">
+            <div class="block" @click="goFollower(user.userId)">
                 <p class="num">{{user.fans}}</p>粉丝
-              </router-link>
             </div>
             <div class="block" v-if="roleId==2">
               <router-link to="/comments">
@@ -96,6 +92,13 @@ export default {
     }
   },
   methods: {
+    goFollow(id){
+      this.$router.push({path:`/follow/${id}`});
+    },
+    goFollower(id){
+      this.$router.push({path:`/follower/${id}`});
+
+    },
     goSignCoach() {
       this.$router.push({ path: `/signcoach/${this.userId}` });
     },

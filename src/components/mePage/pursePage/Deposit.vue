@@ -66,6 +66,10 @@ export default {
         document.body.appendChild(div);
         document.forms[0].submit();
       });
+
+    },
+    bank(){
+      
     }
   }
 };

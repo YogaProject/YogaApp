@@ -18,15 +18,11 @@
           </div>
           <!-- 关注、粉丝、动态、交易入口 -->
           <div class="entrance">
-            <div class="block">
-              <router-link to="/follow">
+            <div class="block"  @click="goFollow(data.userId)">
                 <p class="num">{{data.focus}}</p>关注
-              </router-link>
             </div>
-            <div class="block">
-              <router-link to="/follower">
+            <div class="block" @click="goFollower(data.userId)">
                 <p class="num">{{data.fans}}</p>粉丝
-              </router-link>
             </div>
             <div class="block">
               <router-link to="/mynews">
@@ -53,12 +49,7 @@
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column" v-if="role==1">
-              <router-link to="/mycoach">
-                我的教练
-                <i class="cubeic-arrow"/>
-              </router-link>
-            </div>
+        
             <div class="column" v-if="role==1">
               <router-link to="/userorder">
                 我的订单
@@ -72,7 +63,7 @@
               </router-link>
             </div>
             <div class="column" v-if="role==2">
-              <router-link to="{path:'/myvenue'}">
+              <router-link to="/myvenue">
                 我的场馆
                 <i class="cubeic-arrow"/>
               </router-link>
@@ -125,7 +116,7 @@ export default {
           console.log(res.data);
           this.venue.venueId = res.data.venueId;
           this.venue.venueName = res.data.venueName;
-          this.userImg = "http://192.168.5.58:8082/" + res.data.userHeadimg;
+          this.userImg = "http://192.168.5.228:8082" + res.data.userHeadimg;
           this.data = res.data;
         } else {
           this.$createToast({
@@ -141,7 +132,7 @@ export default {
         if (res.code === 1) {
           console.log(res.data);
           this.data = res.data;
-          this.userImg = "http://192.168.5.58:8082/" + res.data.userHeadimg;
+          this.userImg = "http://192.168.5.228:8082" + res.data.userHeadimg;
         } else {
           this.$createToast({
             type: "warn",
@@ -154,6 +145,13 @@ export default {
     // this.$fetch('/api/')
   },
   methods: {
+       goFollow(id){
+      this.$router.push({path:`/follow/${id}`});
+    },
+    goFollower(id){
+      this.$router.push({path:`/follower/${id}`});
+
+    },
     goSetting() {
       this.$router.push({ path: "/settings" });
     },

@@ -72,12 +72,12 @@ export default new Router({
       component: () => import('./components/newsPage/CommentPage.vue')
     },
     {
-      path: '/follow',
+      path: '/follow/:id',
       name: 'follow',
       component: () => import('./components/mePage/FollowList.vue')
     },
     {
-      path: '/follower',
+      path: '/follower/:id',
       name: 'follower',
       component: () => import('./components/mePage/FollowerList.vue')
     },

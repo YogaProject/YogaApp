@@ -65,7 +65,6 @@
   </div>
 </template>
 <script>
-import Mock from "@/components/newsPage/message.js";
 import CubePage from "@/components/common/cube-page.vue";
 export default {
   name: "newsPage",
@@ -74,76 +73,84 @@ export default {
   },
   data() {
     return {
+      items:[],
+      msg: [],
       clientHeight: "",
       selectedLabel: "all",
-      initTime: new Date().getTime(),
       id: 0,
       size: 50,
-      infinite: true
+      infinite: true,
+      address: { longitude: 104.0, latitude: 30.582, roleId: 0 },
+      data:{},
     };
   },
-  mounted() {
+   mounted() {
+    
     this.clientHeight = `${document.documentElement.clientHeight}`;
+
+ 
+    
+    this.$post("/api/homepage/showHomepage", this.address).then(res => {
+      console.log(res.data);
+      this.msg = res.data;
+    });
   },
   methods: {
     getItem(id) {
-      const msg =
-        Mock.messages[Math.floor(Math.random() * Mock.messages.length)];
-      return {
-        id,
-        username: "mr.lee",
-        msg: msg,
-        img: "",
-        userlevel: "vip2",
-        location: "gotham",
-        avatar: ".\newsPageTulips.jpg",
-        time: new Date(
-          Math.floor(
-            this.initTime +
-              id * this.size * 1000 +
-              Math.random() * this.size * 1000
-          )
-        ).toLocaleTimeString()
-      };
+      if (id > 49) {
+        this.id = 0;
+      }
+      const data = this.msg[id];
+      // console.log(id + "." + data);
+      return data;
     },
     onFetch() {
-      let items = [];
       return new Promise(resolve => {
         setTimeout(() => {
           for (let i = 0; i < this.size; i++) {
-            items.push(this.getItem(this.id++));
+            this.items.push(this.getItem(this.id++));
           }
-          resolve(items);
+          resolve(this.items);
         }, 1000);
       });
     },
-    handleClick(data) {
+    handleClick(id) {
       // 传入id  并根据router跳转
-      this.$router.push("/newsDetail");
-      console.log(data);
+      this.$router.push({path:`/newsDetail/${id}`});
     },
-    clickHandler() {
+    clickHandler(label) {
       // 点击tab，改变数据
-    },
-    openSelect() {
-      this.$createActionSheet({
-        title: "",
-        data: [
-          {
-            content: "删除动态",
-            class: "delete"
-          }
-        ],
-        onSelect: (item, index) => {
-          this.$createToast({
-            txt: `Clicked ${item.content}`,
-            time: 1000
-          }).show();
-        }
-      }).show();
-    },
-    goPage(data){
-
+      var _this = this;
+      switch (label) {
+        case "coach":
+          this.address.roleId = 2;
+          this.$post("/api/homepage/showOtherHomepage", this.address).then(
+            res => {
+              this.items=[];
+              // console.log('items'+this.items);
+              this.msg = res.data;
+              this.onFetch();
+            }
+          );
+          break;
+        case "venue":
+          this.address.roleId = 3;
+          this.$post("/api/homepage/showOtherHomepage", this.address).then(
+            res => {
+              // console.log(res.data);
+              _this.msg = res.data;
+            }
+          );
+          break;
+        case "follow":
+          this.$post("/api/follow/showFollowHomepage").then(res => {
+            console.log(res.data);
+            _this.msg = res.data;
+          });
+          break;
+        default:
+          break;
+      }
     }
   }
 };
