@@ -19,18 +19,18 @@
           <!-- 关注、粉丝、动态、交易入口 -->
           <div class="entrance">
             <div class="block" @click="goFollow(user.userId)">
-                <p class="num">{{user.focus}}</p>关注
+              <p class="num">{{user.focus}}</p>关注
             </div>
             <div class="block" @click="goFollower(user.userId)">
-                <p class="num">{{user.fans}}</p>粉丝
+              <p class="num">{{user.fans}}</p>粉丝
             </div>
             <div class="block" v-if="roleId==2">
               <router-link to="/comments">
                 <p class="num">{{user.comments}}</p>评价
               </router-link>
             </div>
-               <div class="block" @click="follow(user.userId)">
-                <p class="follow" >+加关注</p>
+            <div class="block" @click="follow(user.userId)">
+              <p class="follow">+加关注</p>
             </div>
           </div>
 
@@ -76,40 +76,42 @@ export default {
     console.log("!!!" + this.userId);
     this.roleId = sessionStorage.getItem("roleId");
     let meId = sessionStorage.getItem("userId");
-    if (this.roleId === "1") {
-      this.$post("/api/user/getStudentInfo", this.userId).then(res => {
-        if (res.code === 1) {
-          this.user = res.data;
-          this.avatar = "http://47.111.104.78:8082" + res.data.userHeadimg;
-        }
-      });
-    } else {
-      this.$post("/api/user/getDetailInfoByUserId", this.userId).then(res => {
-        console.log(res.data);
-        this.user = res.data;
-        this.avatar = "http://47.111.104.78:8082" + res.data.headImg;
-      });
-    }
+    this.getData();
   },
   methods: {
-    goFollow(id){
-      this.$router.push({path:`/follow/${id}`});
+    getData() {
+      if (this.roleId === "1") {
+        this.$post("/api/user/getStudentInfo", this.userId).then(res => {
+          if (res.code === 1) {
+            this.user = res.data;
+            this.avatar = "http://47.111.104.78:8082" + res.data.userHeadimg;
+          }
+        });
+      } else {
+        this.$post("/api/user/getDetailInfoByUserId", this.userId).then(res => {
+          console.log(res.data);
+          this.user = res.data;
+          this.avatar = "http://47.111.104.78:8082" + res.data.headImg;
+        });
+      }
     },
-    goFollower(id){
-      this.$router.push({path:`/follower/${id}`});
-
+    goFollow(id) {
+      this.$router.push({ path: `/follow/${id}` });
+    },
+    goFollower(id) {
+      this.$router.push({ path: `/follower/${id}` });
     },
     goSignCoach() {
       this.$router.push({ path: `/signcoach/${this.userId}` });
     },
-    follow(userid){
-       this.$post("/api/follow/addFollow", userid).then(res => {
+    follow(userid) {
+      this.$post("/api/follow/addFollow", userid).then(res => {
         const toast = this.$createToast({
           txt: res.message,
           type: "correct"
         });
         toast.show();
-        this.getList();
+        this.getData();
       });
     }
   }
@@ -208,7 +210,7 @@ export default {
 .title {
   border-bottom: 1px solid #ccc;
 }
-.follow{
+.follow {
   width: 100%;
   /* background-color:  */
 }

@@ -30,21 +30,31 @@ export default {
   },
   data() {
     return {
-        money:'',
+      money: "",
       value: "",
       remain: "0.00",
       clearable: {
         visible: true,
-        blurHidden: false,
-       
+        blurHidden: false
       },
-       options: ["尾号0111", "尾号0112", "尾号0113", "尾号0114"]
+      options: ["尾号0111", "尾号0112", "尾号0113", "尾号0114"]
     };
   },
   methods: {
-      withdraw(money,value){
-
-      }
+    withdraw(money, value) {
+      let data = {
+        money: this.value,
+        userId: sessionStorage.getItem("userId"),
+        account: "jblooc8131@sandbox.com"
+      };
+      this.$post("/api/wallet/withdrawDeposit", data).then(res => {
+        const toast = this.$createToast({
+          txt: res.message,
+          type: "txt"
+        });
+        toast.show();
+      });
+    }
   }
 };
 </script>

@@ -3,13 +3,10 @@
     <!-- 评论发布页面  -->
     <cube-page title="评论" showBack>
       <div slot="content">
-        <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
-          <cube-form
-            :model="model"
-            :field="fields"
-            @submit="submitHandler"
-          ></cube-form>
+          <!-- :style="{height:clientHeight-100+'px'}" -->
+          <cube-textarea v-model="value"></cube-textarea>
+          <cube-button @click="submit">发布</cube-button>
         </div>
       </div>
     </cube-page>
@@ -25,45 +22,28 @@ export default {
   },
   data() {
     return {
-      model: {
-        content: ""
-      },
-        fields: [
-          {
-            type: "textarea",
-            modelKey: "content",
-            placeholder: "输入内容...",
-            // debounce:100,
-            props: {
-              maxlength: 280
-            }
-          },
-          {
-            type: "submit",
-            label: "发布"
-          }
-        ]
-      
+      value: ""
     };
   },
   // mounted() {},
   methods: {
-    submitHandler(e, model) {
-      console.log(e);
-      e.preventDefault();
-      let mid = this.$route.params.id;
-      let comment = {
-        entityType: 2,
-        commentDetail: model.content,
-        entityId: mid
+    submit() {
+      let id = this.$route.params.id;
+      let data={
+        entityId:id,
+        entityType:1,
+        commentDetail:this.value
       }
-      this.$post("/api/comment/addComment",comment).then(res => {
-        const toast = this.$createToast({
+      this.$post('/api/comment/addComment',data).then(res=>{
+         const toast = this.$createToast({
           txt: res.message,
-          type: "txt"
+          type: "correct"
         });
         toast.show();
-      });
+        if(res.code===1){
+          this.$router.go(-1);
+        }
+      })
     }
   }
 };

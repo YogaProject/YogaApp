@@ -4,9 +4,9 @@
     <!-- cube-page -->
     <cube-page title="动态正文" showBack>
       <div slot="content">
-        <div class="view-wrapper">
+        <div class="view-wrapper" :style="{height:clientHeight-50+'px'}">
           <cube-sticky :pos="scrollY">
-            <cube-scroll :scroll-events="scrollEvents" @scroll="scrollHandler" :style="{height:clientHeight-50+'px'}">
+            <cube-scroll :scroll-events="scrollEvents" @scroll="scrollHandler">
               <!-- 动态展示部分div -->
               <div class="news">
                 <header class="info">
@@ -66,7 +66,7 @@
                 <!-- 评论时间 -->
                 <p class="time">
                   <span>{{item.commentCreateTime}}</span>
-                  <span class="cubeic-message" @click="addcomment"></span>
+                  <!-- <span class="cubeic-message" @click="addcomment"></span> -->
                 </p>
               </div>
             </cube-scroll>
@@ -166,7 +166,7 @@ export default {
 }
 /* 动态发布时间 */
 .date {
-  margin-left: 170px;
+  margin-left: 140px;
   color: #ccc;
 }
 /* 动态标题 */
@@ -195,7 +195,10 @@ export default {
   margin-bottom: 30px;
   background-size:cover;
 }
-
+.name{
+  width:70px;
+  line-height: 20px;
+}
 .cubeic-vip {
   font-size: 12px;
   /* border: 1px solid purple; */

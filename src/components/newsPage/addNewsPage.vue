@@ -30,6 +30,7 @@ export default {
   },
   data() {
     return {
+      imgurl:'',
       validity: {},
       valid: undefined,
       model: {
@@ -104,7 +105,12 @@ export default {
   methods: {
     submitHandler(e, model) {
       e.preventDefault();
-      this.$post("/api/homepage/pushHomepage", model).then(res => {
+      let data={
+         title: model.title,
+        content: model.content,
+        img:this.imgurlDataCue
+      }
+      this.$post("/api/homepage/pushHomepage", data).then(res => {
         console.log(res);
         const toast = this.$createToast({
           txt: res.message,

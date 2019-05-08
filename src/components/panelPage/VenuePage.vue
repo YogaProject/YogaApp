@@ -20,23 +20,18 @@
                 :key="item.userId"
                 :position="{lng:item.longitude,lat:item.latitude}"
                 :dragging="false"
+                title="点击查看详情"
                 animation="BMAP_ANIMATION_BOUNCE"
-                @click="infoWindowOpen"
+                @click="goDetail(item.userId)"
               >
                 <!-- <bm-label content="教练A" :offset="{width: -35, height: 30}"/> -->
-                <bm-info-window
-                  :show="show"
-                  @close="infoWindowClose"
-                  @open="infoWindowOpen"
-                  class="window"
-                >
-                  <div class="left">
-                    <div class="avatar" @click="goDetail(item.userId)" :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.headImg || '') + ')'}"></div>
-                    <p class="name">{{item.realName}}</p>
-                    <p>{{item.clicks}}</p>
-                  </div>
-               
-                </bm-info-window>
+                <bm-label
+                :content="'场馆：'+item.realName"
+                :labelStyle="{'border': '2px solid #55efc4',
+  'border-radius': '16px',
+  'font-size':'14px',}"
+                :offset="{width: -35, height: 30}"
+              />
               </bm-marker>
             </baidu-map>
         </div>

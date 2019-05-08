@@ -162,6 +162,11 @@ export default new Router({
       component: () => import('./components/mePage/settings/BindingPhone.vue')
     },
     {
+      path: '/return',
+      name: 'return',
+      component: () => import('./components/mePage/pursePage/Return.vue')
+    },
+    {
       path: '/deposit',
       name: 'deposit',
       component: () => import('./components/mePage/pursePage/Deposit.vue')

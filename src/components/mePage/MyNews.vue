@@ -3,10 +3,11 @@
 <template>
   <!--图文页面组件  -->
   <!-- 无限滚动 -->
-  <div class="box" :style="{height:clientHeight+'px'}">
-    <cube-page type="recycle-list" title="我的动态" showBack="true">
+  <div class="box" :style="{height:clientHeight-50+'px'}">
+    <cube-page type="recycle-list" title="动态" showBack>
       <div slot="content">
         <div class="view-wrapper">
+          <!-- 筛选条件 -->
           <!-- 无限回收滚动 -->
           <cube-recycle-list class="list" :infinite="infinite" :size="size" :on-fetch="onFetch">
             <template slot="tombstone">
@@ -21,41 +22,32 @@
             </template>
             <!-- 实际内容展示 -->
             <template slot="item" slot-scope="{ data }">
-              <div :id="data.id" class="item">
+              <div :id="data.userId" class="item" @click="handleClick(data.mid)">
                 <div class="bubble">
-                  <div class="operation">
-                    <i class="cubeic-select" @click="openSelect" :id="data.id"></i>
-                  </div>
                   <div class="info">
-                    <!-- 头像 -->
-                    <div
-                      class="avatar"
-                      :style="{backgroundImage: 'url(' + (data.avatar || '') + ')'}"
-                      @click="goPage(data)"
-                    ></div>
+                    <!-- 头像 'http://47.111.104.78:8082'-->
+                    <div class="avatar"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.userHeadimg|| '') + ')'}"></div>
                     <!-- 用户名 -->
                     <span class="name">
-                      {{data.username}}
+                      {{data.userNickName}}
+                      [{{data.roleName}}]
                       <!-- vip -->
-                      <i class="cubeic-vip">{{data.userlevel}}</i>
+                      <i class="cubeic-vip">vip{{data.userLevel}}</i>
                     </span>
 
                     <!-- 发布时间 -->
-                    <span class="time">{{data.time}}</span>
+                    <span class="time">{{data.publishTime}}</span>
                   </div>
                   <!-- 背景图片 -->
-                  <div class="bkimage" :style="{backgroundImage: 'url(' + (data.img || '') + ')'}"></div>
-                  <div class="content" @click="handleClick(data)">
-                    <span>{{ data.msg }}</span>
-                    <span class="location">
-                      <i class="cubeic-location"/>
-                      {{data.location}}
-                    </span>
+                  <div class="bkimage" :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.img || '') + ')'}"></div>
+                  <div class="content">
+                    <span>{{ data.title }}</span>
+                  
                   </div>
                 </div>
               </div>
             </template>
-            <!-- <div slot="spinner">Loading Data</div> -->
+            <div slot="spinner">Loading Data</div>
             <div slot="noMore">没有更多数据了</div>
           </cube-recycle-list>
         </div>
@@ -66,10 +58,14 @@
 </template>
 <script>
 import CubePage from "@/components/common/cube-page.vue";
+import AddBtn from "@/components/newsPage/addNewsBtn.vue";
+
 export default {
   name: "newsPage",
   components: {
-    CubePage
+    // "news-header": header
+    CubePage,
+    "add-btn": AddBtn
   },
   data() {
     return {
@@ -77,22 +73,23 @@ export default {
       msg: [],
       clientHeight: "",
       selectedLabel: "all",
+      initTime: new Date().getTime(),
       id: 0,
       size: 50,
       infinite: true,
       address: { longitude: 104.0, latitude: 30.582, roleId: 0 },
       data:{},
+  
     };
   },
-   mounted() {
+  mounted() {
     
     this.clientHeight = `${document.documentElement.clientHeight}`;
-
- 
-    
-    this.$post("/api/homepage/showHomepage", this.address).then(res => {
+    var _this = this;
+    let userId = sessionStorage.getItem('userId');
+    this.$post("/api/homepage/showSomeoneHomepage",userId).then(res => {
       console.log(res.data);
-      this.msg = res.data;
+      _this.msg = res.data;
     });
   },
   methods: {
@@ -118,40 +115,7 @@ export default {
       // 传入id  并根据router跳转
       this.$router.push({path:`/newsDetail/${id}`});
     },
-    clickHandler(label) {
-      // 点击tab，改变数据
-      var _this = this;
-      switch (label) {
-        case "coach":
-          this.address.roleId = 2;
-          this.$post("/api/homepage/showOtherHomepage", this.address).then(
-            res => {
-              this.items=[];
-              // console.log('items'+this.items);
-              this.msg = res.data;
-              this.onFetch();
-            }
-          );
-          break;
-        case "venue":
-          this.address.roleId = 3;
-          this.$post("/api/homepage/showOtherHomepage", this.address).then(
-            res => {
-              // console.log(res.data);
-              _this.msg = res.data;
-            }
-          );
-          break;
-        case "follow":
-          this.$post("/api/follow/showFollowHomepage").then(res => {
-            console.log(res.data);
-            _this.msg = res.data;
-          });
-          break;
-        default:
-          break;
-      }
-    }
+
   }
 };
 </script>
@@ -160,13 +124,8 @@ export default {
   position: fixed;
   top: 54px;
   left: 0;
-  bottom: 0;
+  bottom: 50px;
   width: 100%;
-}
-
-.operation {
-  text-align: right;
-  border-bottom: 1px dotted #ccc;
 }
 
 #tab {
@@ -196,7 +155,7 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
-
+      width:340px;
       // background-color #eeeeee
       .name {
         font-size: 16px;
@@ -213,7 +172,9 @@ export default {
       }
 
       .time {
-        margin-left: 100px;
+        margin-left: 60px;
+        font-size:12px;
+        
       }
 
       .avatar {
@@ -233,6 +194,7 @@ export default {
       width: 330px;
       height: 120px;
       background-color: #aaa;
+      background-size:cover;
     }
 
     p {
@@ -273,20 +235,26 @@ export default {
 
       .content {
         position: absolute;
-        bottom: 20px;
+        bottom: 30px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         flex-wrap: nowrap;
-        height:30px;
-        width:92%;
-        padding:5px 5px 5px 5px;
-        background-color:rgba(1,1,1,0.5);
-        color:#fff;
-        margin-left:0px;
+        height:20px;
+        width:95%;
+        margin:0;
+        background-color:rgba(250,250,250,0.8);
+        font-size:16px;
+        font-weight:700;
+        line-height:20px;
       }
     }
 
+    .meta {
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 3px;
+    }
   }
 }
 </style>

@@ -62,12 +62,12 @@
                 <i class="cubeic-arrow"/>
               </router-link>
             </div>
-            <div class="column" v-if="role==2">
+            <!-- <div class="column" v-if="role==2">
               <router-link to="/myvenue">
                 我的场馆
                 <i class="cubeic-arrow"/>
               </router-link>
-            </div>
+            </div> -->
             <!-- <div class="column">
               <router-link to="/">
                 *众筹*
@@ -116,7 +116,7 @@ export default {
           console.log(res.data);
           this.venue.venueId = res.data.venueId;
           this.venue.venueName = res.data.venueName;
-          this.userImg = "http://192.168.5.228:8082" + res.data.userHeadimg;
+          this.userImg = 'http://47.111.104.78:8082' + res.data.userHeadimg;
           this.data = res.data;
         } else {
           this.$createToast({
@@ -132,7 +132,7 @@ export default {
         if (res.code === 1) {
           console.log(res.data);
           this.data = res.data;
-          this.userImg = "http://192.168.5.228:8082" + res.data.userHeadimg;
+          this.userImg = 'http://47.111.104.78:8082' + res.data.userHeadimg;
         } else {
           this.$createToast({
             type: "warn",

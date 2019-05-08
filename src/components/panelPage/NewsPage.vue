@@ -8,9 +8,9 @@
       <div slot="content">
         <div class="view-wrapper">
           <!-- 筛选条件 -->
-          <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
+          <!-- <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
             <cube-tab v-for="item in tabs" :label="item.label" :key="item.label">{{item.name}}</cube-tab>
-          </cube-tab-bar>
+          </cube-tab-bar> -->
           <add-btn></add-btn>
 
           <!-- 无限回收滚动 -->
@@ -31,7 +31,7 @@
                 <div class="bubble">
                   <div class="info">
                     <!-- 头像 'http://47.111.104.78:8082'-->
-                    <div class="avatar"  :style="{backgroundImage: 'url(' + (+data.userHeadimg|| '') + ')'}"></div>
+                    <div class="avatar"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.userHeadimg|| '') + ')'}"></div>
                     <!-- 用户名 -->
                     <span class="name">
                       {{data.userNickName}}
@@ -44,7 +44,7 @@
                     <span class="time">{{data.publishTime}}</span>
                   </div>
                   <!-- 背景图片 -->
-                  <div class="bkimage" :style="{backgroundImage: 'url(' + (+data.img || '') + ')'}"></div>
+                  <div class="bkimage" :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+data.img || '') + ')'}"></div>
                   <div class="content">
                     <span>{{ data.title }}</span>
                     <span class="location">
@@ -55,7 +55,7 @@
                 </div>
               </div>
             </template>
-            <!-- <div slot="spinner">Loading Data</div> -->
+            <div slot="spinner">Loading Data</div>
             <div slot="noMore">没有更多数据了</div>
           </cube-recycle-list>
         </div>
@@ -234,13 +234,13 @@ export default {
       width:340px;
       // background-color #eeeeee
       .name {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 500;
       }
 
       .cubeic-vip {
         font-size: 12px;
-        border: 1px solid purple;
+        // border: 1px solid purple;
         border-radius: 10px;
         padding-left: 2px;
         padding-right: 3px;

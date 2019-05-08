@@ -12,7 +12,7 @@
           <baidu-map
             class="map"
             :center="mylocation"
-            :zoom="10"
+            :zoom="12"
             :style="{height:clientHeight-100+'px'}"
           >
             <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
@@ -25,10 +25,16 @@
               :position="position = {lng:item.longitude,lat:item.latitude}"
               :dragging="false"
               animation="BMAP_ANIMATION_BOUNCE"
-              @click="WindowOpen(item)"
+              @click="goDetail(item.userId)"
             >
-              <!-- <bm-label content="教练A" :offset="{width: -35, height: 30}"/> -->
-              <bm-info-window
+              <bm-label
+                :content="item.realName+'('+item.coachStyle+')'"
+                :labelStyle="{'border': '2px solid #55efc4',
+  'border-radius': '16px',
+  'font-size':'14px',}"
+                :offset="{width: -35, height: 30}"
+              />
+              <!-- <bm-info-window
                 :show="show"
                 :position="windowPosition"
                 @close="infoWindowClose"
@@ -46,7 +52,7 @@
                 <div class="right">
                   <p>{{item.coachStyle}}</p>
                 </div>
-              </bm-info-window>
+              </bm-info-window>-->
             </bm-marker>
           </baidu-map>
         </div>
@@ -192,6 +198,7 @@ export default {
 }
 </style>
 <style>
+
 </style>
 
 

@@ -13,13 +13,22 @@
           >
             <div>
               <div class="content">
-                <cube-slide :data="items"/>
+                <cube-slide :data="items" class="picture"/>
                 <p class="title">{{data.realName}}</p>
                 <p class="click">点击量：{{data.clicks}}</p>
-                <p class="location">
+                <div class="location">
                   <i class="cubeic-location" @click="openMap">{{data.userLocation}}</i>
-                </p>
-                <p class="content">{{data.content}}</p>
+                  <div :style="{height:'100px'}">
+                    <baidu-map class="map" :center="{'lng':104.05360830295139,'lat':30.566594432858048}" :zoom="10" :style="{height:'100px'}">
+                      <bm-marker
+                        :position="{'lng':104.05360830295139,'lat':30.566594432858048}"
+                        :dragging="false"
+                        animation="BMAP_ANIMATION_BOUNCE"
+                      ></bm-marker>
+                    </baidu-map>
+                  </div>
+                </div>
+                <p class="content">{{data.venueDetail}}</p>
                 <cube-button @click="goSign(data.userId)" v-if="role==='2'">签约场馆</cube-button>
               </div>
             </div>
@@ -46,11 +55,7 @@ export default {
         scrollbar: true
       },
       items: [
-        {
-          url: "",
-          image:
-            "//webapp.didistatic.com/static/webapp/shield/cube-ui-examples-slide01.png"
-        },
+
       ],
       data: {
         id: "1",
@@ -58,17 +63,30 @@ export default {
         clicks: "22222",
         location: "湖南长沙",
         content: "梅溪湖36人男团由此出道"
-      }
+      },
+      location: {}
     };
   },
   mounted() {
     this.role = sessionStorage.getItem("roleId");
     let id = this.$route.params.id;
     let venue = this.$route.query.venue;
-    console.log(id)
+    console.log(id);
     this.$post("/api/user/getVenueDetailInfoByUserId", id).then(res => {
       if (res.code === 1) {
         this.data = res.data;
+        this.items.push({ image: "http://47.111.104.78:8082" + res.data.img1 });
+        this.items.push({ image: "http://47.111.104.78:8082" + res.data.img2 });
+        this.items.push({ image: "http://47.111.104.78:8082" + res.data.img3 });
+        this.$fetch(
+          "http://api.map.baidu.com/geocoder/v2/?mcode=BA:AD:09:3A:82:82:9F:B4:32:A7:B2:8C:B4:CC:F0:E9:F3:7D:AE:58;io.dcloud.Yoga&address=" +
+            res.data.userLocation +
+            "&output=json&ak=lo0Pt3Z9IWXX5YzItCBu62KPcNHkss78&callback_type=jsonp"
+        ).then(res => {
+          if (res.status === 0) {
+            this.location = res.result.location;
+          }
+        });
       }
     });
   },
@@ -97,8 +115,7 @@ export default {
                 time: 3000,
                 txt: "已发送签约申请"
               }).show();
-            }
-            else{
+            } else {
               this.$createToast({
                 type: "warn",
                 time: 1000,
@@ -154,7 +171,9 @@ export default {
   width: 100%;
   background-color: #eee;
 }
-
+.picture {
+  height: 200px;
+}
 .content {
   background-color: #fff;
   min-height: 200px;

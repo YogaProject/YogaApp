@@ -17,13 +17,21 @@
             </cube-input>
             <ul v-for="item in list" :key="item.id">
               <li class="column">
-                <div class="avatar"></div>
+                <div
+                  class="avatar"
+                  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.userHeadimg|| '') + ')'}"
+                ></div>
                 <span>
                   {{item.userNickName}}
                   <i class="cubeic-vip">vip{{item.userLevel}}</i>
                 </span>
                 <span class="is follow" v-if="item.followStatus===1">互相关注</span>
-                <span class="not follow" v-if="item.followStatus!=1" @click="follow(item.userId)">
+                <span class="is follow" v-if="item.followStatus===0">已关注</span>
+                <span
+                  class="not follow"
+                  v-if="item.followStatus!=1&&userId!=item.userId&&item.followStatus!=0"
+                  @click="follow(item.userId)"
+                >
                   <i class="cubeic-add"></i>关注
                 </span>
               </li>
