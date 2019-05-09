@@ -81,7 +81,7 @@ export default {
         this.$fetch(
           "http://api.map.baidu.com/geocoder/v2/?mcode=BA:AD:09:3A:82:82:9F:B4:32:A7:B2:8C:B4:CC:F0:E9:F3:7D:AE:58;io.dcloud.Yoga&address=" +
             res.data.userLocation +
-            "&output=json&ak=lo0Pt3Z9IWXX5YzItCBu62KPcNHkss78&callback_type=jsonp"
+            "&output=json&ak=lo0Pt3Z9IWXX5YzItCBu62KPcNHkss78&callback_type=jsonpcallback=test"
         ).then(res => {
           if (res.status === 0) {
             this.location = res.result.location;
@@ -91,6 +91,7 @@ export default {
     });
   },
   methods: {
+    test(){},
     goSign(uesrId) {
       this.$createDialog({
         type: "confirm",

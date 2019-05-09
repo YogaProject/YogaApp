@@ -11,7 +11,11 @@
               <div class="news">
                 <header class="info">
                   <!-- 头像 -->
-                  <div class="avatar" @click="goPage(content.userId)"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+content.userHeadimg|| '') + ')'}"></div>
+                  <div
+                    class="avatar"
+                    @click="goPage(content.userId,content.roleName)"
+                    :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+content.userHeadimg|| '') + ')'}"
+                  ></div>
                   <!-- 用户昵称 -->
                   <span class="name">{{content.userNickName}}</span>
                   <!-- vip -->
@@ -19,7 +23,11 @@
                   <!-- 日期+时间 -->
                   <span class="date">{{content.publishTime}}</span>
                 </header>
-                <div class="picture" @click="showImagePreview"  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+content.img|| '') + ')'}">
+                <div
+                  class="picture"
+                  @click="showImagePreview"
+                  :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+content.img|| '') + ')'}"
+                >
                   <!-- 图片展示 -->
                   <p class="title">{{content.title}}</p>
                 </div>
@@ -35,7 +43,7 @@
               <cube-sticky-ele ele-key="评论">
                 <ul class="sticky-header">
                   <li class="ele">
-                    评论 {{content.commentCount}} 
+                    评论 {{content.commentCount}}
                     <!-- <i class="cubeic-good"></i> -->
                     <i class="cubeic-message" @click="addcomment(content.mid)">发评论</i>
                   </li>
@@ -45,7 +53,11 @@
               <div class="comments" v-for="item in comment" :key="item.commentId">
                 <!-- 评论者头像 -->
                 <header class="info">
-                  <div class="avatar" @click="goPage(item.userId)" :style="{backgroundImage: 'url(' + (userImg|| '') + ')'}"></div>
+                  <div
+                    class="avatar"
+                    @click="goPage(item.userId)"
+                    :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.userHeadimg|| '') + ')'}"
+                  ></div>
                   <!-- 评论者昵称 -->
                   <span class="name">
                     {{item.userNickName}}
@@ -89,12 +101,12 @@ export default {
       scrollY: 0,
       showInner: true,
       content: {},
-      comment:[],
-      clientHeight:"",
+      comment: [],
+      clientHeight: ""
     };
   },
   mounted() {
-        this.clientHeight = `${document.documentElement.clientHeight}`;
+    this.clientHeight = `${document.documentElement.clientHeight}`;
 
     let mid = this.$route.params.id;
     console.log(mid);
@@ -110,19 +122,29 @@ export default {
   },
   methods: {
     // 判断children超过两条则显示
-    goPage(id) {
+    goPage(id,roleName) {
+      let roleId="";
+      if(roleName==='学员'){
+         roleId= 1;
+      }
+      else{
+        roleId = 2
+      }
       // 点击跳转该用户主页 获取该用户id
-      this.$router.push(`/personalpage/${id}`)
+      this.$router.push({
+        path: "/personalPage",
+        query: { id: id,roleId:roleId }
+      });
     },
     showImagePreview() {
       this.$createImagePreview({
-        imgs: this.content.img
+        imgs: ["http://47.111.104.78:8082" + this.content.img]
       }).show();
     },
     scrollHandler({ y }) {
       this.scrollY = -y;
     },
-    addcomment(id ) {
+    addcomment(id) {
       // ！！传入动态id 回复的评论id
       this.$router.push(`/comment/${id}`);
     }
@@ -193,10 +215,10 @@ export default {
   background-color: #aaa;
   position: relative;
   margin-bottom: 30px;
-  background-size:cover;
+  background-size: cover;
 }
-.name{
-  width:70px;
+.name {
+  width: 70px;
   line-height: 20px;
 }
 .cubeic-vip {

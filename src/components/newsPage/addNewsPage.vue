@@ -108,7 +108,7 @@ export default {
       let data={
          title: model.title,
         content: model.content,
-        img:this.imgurlDataCue
+        img:this.imgurl
       }
       this.$post("/api/homepage/pushHomepage", data).then(res => {
         console.log(res);

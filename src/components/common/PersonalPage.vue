@@ -24,24 +24,22 @@
             <div class="block" @click="goFollower(user.userId)">
               <p class="num">{{user.fans}}</p>粉丝
             </div>
-            <div class="block" v-if="roleId==2">
-              <router-link to="/comments">
+            <div class="block" v-if="roleId==2" @click="goComment(user.userId)">
                 <p class="num">{{user.comments}}</p>评价
-              </router-link>
             </div>
             <div class="block" @click="follow(user.userId)">
               <p class="follow">+加关注</p>
             </div>
           </div>
 
-          <div class="info" v-if="user.privacy==1">
+          <div class="info" v-if="user.userPrivacy==1">
             <p class="title">联系方式</p>
-            <p>手机号：{{user.phone}}</p>
-            <p>QQ：{{user.qq}}</p>
-            <P>微信：{{user.wechat}}</P>
+            <p>手机号：{{user.userPhone}}</p>
+            <p>QQ：{{user.userQq}}</p>
+            <P>微信：{{user.userWechat}}</P>
           </div>
         </div>
-        <cube-button @click="goSignCoach()" class="btn" v-if="roleId==1">约私教</cube-button>
+        <cube-button @click="goSignCoach()" class="btn" v-if="myrole==1">约私教</cube-button>
       </div>
     </cube-page>
   </div>
@@ -61,6 +59,7 @@ export default {
       student: false,
       userId: "",
       roleId: "",
+      myrole:'',
       avatar: "",
       user: {
         id: "",
@@ -72,15 +71,18 @@ export default {
   },
   mounted() {
     this.clientHeight = `${document.documentElement.clientHeight}`;
-    this.userId = this.$route.params.id;
+    this.userId = this.$route.query.id;
     console.log("!!!" + this.userId);
-    this.roleId = sessionStorage.getItem("roleId");
+    this.myrole = sessionStorage.getItem("roleId");
     let meId = sessionStorage.getItem("userId");
     this.getData();
   },
   methods: {
     getData() {
-      if (this.roleId === "1") {
+      let roleId = this.$route.query.roleId;
+      this.roleId = roleId;
+      console.log("roleId"+roleId)
+      if (roleId === 1) {
         this.$post("/api/user/getStudentInfo", this.userId).then(res => {
           if (res.code === 1) {
             this.user = res.data;
@@ -91,7 +93,7 @@ export default {
         this.$post("/api/user/getDetailInfoByUserId", this.userId).then(res => {
           console.log(res.data);
           this.user = res.data;
-          this.avatar = "http://47.111.104.78:8082" + res.data.headImg;
+          this.avatar = "http://47.111.104.78:8082" + res.data.userHeadimg;
         });
       }
     },
@@ -103,6 +105,10 @@ export default {
     },
     goSignCoach() {
       this.$router.push({ path: `/signcoach/${this.userId}` });
+    },
+    goComment(id){
+                this.$router.push({ path: "/comments", query: {coachId:id } });
+
     },
     follow(userid) {
       this.$post("/api/follow/addFollow", userid).then(res => {

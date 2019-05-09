@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 评论发布页面  -->
-    <cube-page title="课程评论" showBack="true">
+    <cube-page title="课程评论" showBack>
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
@@ -66,6 +66,9 @@ export default {
     submitHandler(e, model) {
       e.preventDefault();
       let orderId = this.$route.query.id;
+      let coachId = this.$route.query.coachId;
+console.log(coachId);
+
       let commentVO = {
         orderId: orderId,
         rate: model.rateValue,
@@ -78,7 +81,7 @@ export default {
             txt: res.message
           });
           toast.show();
-          this.$router.push('/comments');
+          this.$router.push({ path: "/comments", query: {coachId:coachId } });
         }
       });
     }

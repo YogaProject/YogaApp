@@ -49,7 +49,7 @@
                     <span>{{ data.title }}</span>
                     <span class="location">
                       <i class="cubeic-location"/>
-                      {{data.distance}}km
+                      {{parseFloat(data.distance).toFixed(2)}}km
                     </span>
                   </div>
                 </div>

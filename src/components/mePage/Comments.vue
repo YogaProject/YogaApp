@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- cube-page  -->
-    <cube-page title="我的评论" showBack="true">
+    <cube-page title="评论" showBack="true">
       <div slot="content">
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
-          <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
+          <!-- <cube-tab-bar v-model="selectedLabel" show-slider @click="clickHandler" id="tab">
             <cube-tab v-for="item in tabs" :label="item.label" :key="item.label">{{item.name}}</cube-tab>
-          </cube-tab-bar>
+          </cube-tab-bar> -->
           <cube-scroll
             ref="scroll"
             :data="comments"
@@ -19,11 +19,11 @@
               <li>
                 <div class="info">
                   <span>
-                    {{item.name}}
+                    {{item.userNickname}}
                     <i class="cubeic-vip">{{item.userLevel}}</i>
                   </span>
-                  <span class="time">{{item.time}}</span>
-                  <span class="type">{{item.coursetype}}</span>
+                  <span class="time">{{item.commentCreatetime}}</span>
+                  <span class="type">{{item.courseName}}</span>
                 </div>
                 <div class="content">
                   <cube-rate v-model="item.commentDegree" :disabled="true" :max="5" :justify="false"></cube-rate>
@@ -86,8 +86,9 @@ export default {
     };
   },
   mounted() {
+          let coachId = this.$route.query.coachId;
     let userId = sessionStorage.getItem("userId");
-    this.$post("/api/user/getAllMyComments").then(res => {
+    this.$post("/api/user/getAllMyComments",coachId).then(res => {
       if (res.code === 1) {
         this.comments = res.data;
       } else {

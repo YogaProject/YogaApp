@@ -10,6 +10,7 @@ export const TIME_OUT = 10000;    // 请求超时时间
 
 // 请求超时时间
 axios.defaults.timeout = TIME_OUT
+axios.defaults.baseURL = 'http://47.111.104.78:8082/'; // 关键步骤–填写后台请求统一的地址
 
 // 封装请求拦截
 axios.interceptors.request.use(

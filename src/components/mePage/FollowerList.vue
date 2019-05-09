@@ -26,7 +26,7 @@
                   <i class="cubeic-vip">vip{{item.userLevel}}</i>
                 </span>
                 <span class="is follow" v-if="item.followStatus===1">互相关注</span>
-                <span class="is follow" v-if="item.followStatus===0">已关注</span>
+                <span class="is follow" v-if="item.followStatus===0&&userId!=item.userId">已关注</span>
                 <span
                   class="not follow"
                   v-if="item.followStatus!=1&&userId!=item.userId&&item.followStatus!=0"

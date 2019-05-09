@@ -1,8 +1,9 @@
 <template>
   <div>
     <!-- cube-page  -->
-    <cube-page title="我的订单" showBack>
+    <cube-page title="我的订单">
       <div slot="content">
+        <i slot="leftbtn" class="cubeic-back" @click="goCoachPage"></i>
         <!-- :style="{height:clientHeight-100+'px'}" -->
         <div class="view-wrapper">
           <cube-scroll ref="scroll" :data="orders" :options="options" @pulling-down="onPullingDown">
@@ -18,7 +19,7 @@
                 </div>
                 <div class="info">
                   <div>
-                    <div class="avatar"></div>
+                    <div class="avatar" :style="{backgroundImage: 'url(' + ('http://47.111.104.78:8082'+item.accepter.img|| '') + ')'}"></div>
                     {{item.payer.nickname}}
                     <i class="cubeic-vip">vip{{item.payer.level}}</i>
                   </div>
@@ -31,7 +32,7 @@
                 </div>
                 <div class="opration">
                   <cube-button v-if="item.orderStatus==='待付款'" @click="pay(item.orderId)">付款</cube-button>
-                  <cube-button v-if="item.orderStatus==='待评价'" @click="goComment(item.orderId)">评论</cube-button>
+                  <cube-button v-if="item.orderStatus==='待评价'" @click="goComment(item.orderId,item.accepter.userId)">评论</cube-button>
                   <cube-button v-if="item.orderStatus==='待评价'" @click="refund(item.orderId)">申请退款</cube-button>
                   <cube-button
                     v-if="item.orderStatus==='待确认'"
@@ -103,6 +104,9 @@ export default {
           this.getData();
         }
       });
+    },
+    goCoachPage(){
+      this.$router.push('/main/coachPage');
     },
     refund(orderId) {
       // this.$post('/api/student/updateOrderForRefund')
@@ -182,8 +186,8 @@ export default {
         time: 1000
       }).show();
     },
-    goComment(id) {
-      this.$router.push({ path: "/addcoursecomments", query: { id } });
+    goComment(id,coachId) {
+      this.$router.push({ path: "/addcoursecomments", query: { id:id,coachId:coachId } });
     },
     onPullingDown() {
       // 模拟更新数据
@@ -201,7 +205,14 @@ export default {
   width: 100%;
   background-color: #eee;
 }
-
+.cubeic-back {
+       position: absolute;
+      top: 0;
+       left: 0;
+       padding: 5px 15px;
+       color: #fff;
+       z-index: 1000;
+     }
 li {
   min-height: 150px;
   font-size: 16px;

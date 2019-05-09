@@ -12,7 +12,7 @@
           <baidu-map
             class="map"
             :center="mylocation"
-            :zoom="12"
+            :zoom="11"
             :style="{height:clientHeight-100+'px'}"
           >
             <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
@@ -120,27 +120,10 @@ export default {
         }
       });
     },
-    goDetail(id) {
-      this.$router.push({ path: `/personalPage/${id}` });
+    goDetail(id,roleId) {
+      this.$router.push({ path: '/personalPage',query:{id:id,roleId:2}});
     },
-    infoWindowClose() {
-      this.show = false;
-      this.windowInfo = {};
-      this.windowPosition.lng = 0;
-      this.windowPosition.lat = 0;
-      console.log("close" + this.windowPosition.lng);
-    },
-    WindowOpen(item) {
-      this.windowInfo = item;
-      this.windowPosition.lng = item.longitude;
-      this.windowPosition.lat = item.latitude;
-      this.show = true;
-      console.log("open1 " + this.windowPosition.lng);
-    },
-    infoWindowOpen() {
-      this.show = true;
-      console.log("open2 " + this.windowPosition.lng);
-    }
+  
   }
 };
 </script>

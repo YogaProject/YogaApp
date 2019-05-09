@@ -12,7 +12,7 @@
             <cube-input v-model="value" type="number" :clearable="clearable">
               <span slot="prepend">￥</span>
             </cube-input>
-            <p>可用余额 {{remain}}元</p>
+            <!-- <p>可用余额 {{remain}}元</p> -->
           </div>
           <cube-button @click="withdraw">预计两小时内到账，确认提现</cube-button>
         </div>
